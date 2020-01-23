@@ -58,6 +58,7 @@ public class Player extends  Base_Actor{
         body.resetMassData();
         fixture.setDensity(0);
         body.setFixedRotation(true);
+        fixture.setUserData("Player");
 
 
         movh = movimiento_horizontal.ninguno;

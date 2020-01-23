@@ -3,8 +3,10 @@ package com.mygdx.main;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -12,6 +14,8 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ChainShape;
@@ -22,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.entidad.Player;
+import com.mygdx.modelo.userdata_value;
 
 public abstract class Escena_juego extends Game implements InputProcessor {
     Stage state;
@@ -30,6 +35,8 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     TiledMap map;
     TiledMapRenderer tiledMapRenderer;
     OrthographicCamera orthocamera;
+
+    protected ShapeRenderer shapeRenderer;
 
     float map_X, map_Y;
 
@@ -62,6 +69,9 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         crear_limite(map_X,map_Y);
         crear_objetos();
 
+        shapeRenderer = new ShapeRenderer();
+
+
 
     }
 
@@ -73,6 +83,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     public void render() {
         float dt = Gdx.graphics.getDeltaTime();
 
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         state.act();
 
         update(dt);
@@ -82,16 +93,15 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
         state.getCamera().position.set(x, y, 0);
 
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-
         tiledMapRenderer.setView(orthocamera);
         tiledMapRenderer.render();
         state.draw();
 
-
         box2d_debug();
 
+
+        //raycast
+        dibujar_raycast();
 
     }
 
@@ -170,7 +180,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         fixtureDef.density = 1f;
 
         Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData("Pared");
+        fixture.setUserData(new userdata_value("Pared",null));
 
         shape.dispose();
 
@@ -199,8 +209,25 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         fixtureDef.density = 1f;
 
         Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData("Limite");
+        fixture.setUserData(new userdata_value("Limite",null));
 
         shape.dispose();
+    }
+
+    public void dibujar_raycast()
+    {
+        shapeRenderer.setProjectionMatrix(state.getBatch().getProjectionMatrix());
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+
+        float cx,cy;
+        double r = Math.toRadians(player.getRotation());
+
+
+        cx = player.getX()+player.getWidth() / 2+(float)Math.cos(r)*Constantes.raycast_distancia;
+        cy = player.getY()+player.getHeight() / 2+(float)Math.sin(r)*Constantes.raycast_distancia;
+
+        shapeRenderer.line(new Vector2((player.getX()+player.getWidth() / 2),(player.getY()+player.getHeight() / 2)), new Vector2(cx,cy));
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.end();
     }
 }

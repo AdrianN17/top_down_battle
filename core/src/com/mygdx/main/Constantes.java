@@ -9,6 +9,7 @@ public class Constantes {
     public static final float PIXEL_IN_METERS =100f;
     public static final float scale = width_G/height_G;
     public static final float scale_player = (width_G/height_G) *2;
+    public static final float raycast_distancia = 1000;
 
 
 

@@ -5,20 +5,34 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.main.Constantes;
 
 public class Base_Actor extends Actor {
-    private Array<TextureRegion> texturas;
+    protected Array<TextureRegion> texturas;
+
+    protected World world;
+    protected Body body;
+    protected Fixture fixture;
+    protected CircleShape shape;
+    protected enum movimiento_horizontal{ninguno,a,d}
+    protected enum movimiento_vertical{ninguno,w,s}
 
     public int id_textura = 1;
 
     public Base_Actor(float x, float y, Stage stage)
     {
         super();
+
         stage.addActor(this);
+
     }
 
     public void loadAnimationFromFiles(String folder,String[] fileNames) {
@@ -63,8 +77,7 @@ public class Base_Actor extends Actor {
 
         if (isVisible())
         {
-            batch.draw(texturas.get(id_textura), getX(), getY(), getOriginX(), getOriginY(),getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+            batch.draw(texturas.get(id_textura), getX(), getY(),getOriginX(), getOriginY(),getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
         }
-
     }
 }

@@ -2,34 +2,37 @@ package com.mygdx.entidad;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.main.Constantes;
+import com.mygdx.modelo.userdata_value;
 
 public class Player extends  Base_Actor{
 
-    public Body body;
-    private Fixture fixture;
-    private CircleShape shape;
-    private enum movimiento_horizontal{ninguno,a,d}
-    private enum movimiento_vertical{ninguno,w,s}
-    public movimiento_horizontal movh;
-    public movimiento_vertical movv;
 
-    public float vel = 200;
 
-    public boolean disparando = false;
-    public short arma_index=0;
-    public float counter=0;
+    protected movimiento_horizontal movh;
+    protected movimiento_vertical movv;
 
+    protected float vel = 200;
+
+    protected boolean disparando = false;
+    protected short arma_index=0;
+    protected float counter=0;
+
+    public short id;
+
+    RayCastCallback callback;
 
     public Player(float x, float y, Stage stage, World world) {
         super(x, y, stage);
+
+        this.world=world;
 
         loadAnimationFromFiles("robot_1" ,new String[]{"robot1_gun","robot1_hold","robot1_machine",
                 "robot1_reload","robot1_silencer","robot1_stand"});
@@ -53,8 +56,8 @@ public class Player extends  Base_Actor{
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.density=0.1f; // (weight: range 0.01 to 1 is good)
-        fixtureDef.friction = 0.7f; // (how slippery it is: 0=like ice 1 = like rubber)
+        fixtureDef.density=0.1f;
+        fixtureDef.friction = 0.7f;
         fixtureDef.restitution = 0.3f;
 
         fixture = body.createFixture(fixtureDef);
@@ -62,13 +65,44 @@ public class Player extends  Base_Actor{
         body.resetMassData();
         fixture.setDensity(0);
         body.setFixedRotation(true);
-        fixture.setUserData("Player");
+        fixture.setUserData(new userdata_value("Player",this));
 
 
         movh = movimiento_horizontal.ninguno;
         movv = movimiento_vertical.ninguno;
 
-        //timer
+
+        id=0;
+
+        //raycast
+
+        callback = new RayCastCallback(){
+            @Override
+            public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+
+                Object obj =  fixture.getUserData();
+
+                if(obj !=null)
+                {
+                    userdata_value obj_user = (userdata_value)obj;
+
+                    if(obj_user.getTipo().equals("Player") )
+                    {
+                        Player obj_player = (Player)obj_user.getObjeto();
+
+                        if(obj_player.id!= id)
+                        {
+                            System.out.println("aaa");
+                        }
+                    }
+                }
+
+
+                return 1;
+            }
+        };
+
+
 
     }
 
@@ -106,6 +140,18 @@ public class Player extends  Base_Actor{
                 id_textura = 1;
                 resize();
             }
+        }
+        else
+        {
+            float x,y;
+            double r = Math.toRadians(getRotation());
+
+
+            x = getX()+getWidth() / 2+(float)Math.cos(r)*Constantes.raycast_distancia;
+            y = getY()+getHeight() / 2+(float)Math.sin(r)*Constantes.raycast_distancia;
+
+
+            world.rayCast(callback, new Vector2((getX()+getWidth() / 2)/Constantes.PIXEL_IN_METERS,(getY()+getHeight() / 2)/Constantes.PIXEL_IN_METERS), new Vector2(x,y));
         }
 
 

@@ -23,6 +23,10 @@ public class Player extends  Base_Actor{
 
     public float vel = 200;
 
+    public boolean disparando = false;
+    public short arma_index=0;
+    public float counter=0;
+
 
     public Player(float x, float y, Stage stage, World world) {
         super(x, y, stage);
@@ -35,15 +39,15 @@ public class Player extends  Base_Actor{
         //box2d
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set((getX() + getWidth()/2) /
+        bodyDef.position.set(Constantes.scale_player*(getX() + getWidth()/2) /
                         Constantes.PIXEL_IN_METERS,
-                (getY() + (getHeight()/2)) / Constantes.PIXEL_IN_METERS);
+                Constantes.scale_player*(getY() + (getHeight()/2)) / Constantes.PIXEL_IN_METERS);
 
 
         body = world.createBody(bodyDef);
 
 
-        float radio = (float)Math.sqrt(getWidth()*getWidth() + getHeight()*getHeight())/2;
+        float radio = Constantes.scale_player*(float)Math.sqrt(getWidth()*getWidth() + getHeight()*getHeight())/2;
         shape = new CircleShape();
         shape.setRadius((radio/2)/Constantes.PIXEL_IN_METERS);
 
@@ -63,11 +67,19 @@ public class Player extends  Base_Actor{
 
         movh = movimiento_horizontal.ninguno;
         movv = movimiento_vertical.ninguno;
+
+        //timer
+
     }
 
     @Override
     public void act(float dt) {
         super.act(dt);
+
+        if(disparando)
+        {
+            counter = counter+dt;
+        }
 
         Vector2 vec = new Vector2(0, 0);
 
@@ -82,6 +94,22 @@ public class Player extends  Base_Actor{
         } else if (movv == movimiento_vertical.s) {
             vec.y = -1;
         }
+
+        if(!disparando) {
+            if (vec.x == 0 && vec.y == 0)
+            {
+                id_textura = 5;
+                resize();
+            }
+            else
+            {
+                id_textura = 1;
+                resize();
+            }
+        }
+
+
+
 
         float mx, my;
         mx = vec.x * body.getMass()* body.getMass() * dt* vel;
@@ -115,32 +143,34 @@ public class Player extends  Base_Actor{
         if(keycode == Input.Keys.D)
         {
             movh = movimiento_horizontal.d;
-            id_textura = 1;
-            resize();
+            /*id_textura = 1;
+            resize();*/
         }
 
         if(keycode == Input.Keys.W)
         {
             movv = movimiento_vertical.w;
-            id_textura = 1;
-            resize();
+            /*id_textura = 1;
+            resize();*/
         }
 
         if(keycode == Input.Keys.S)
         {
             movv = movimiento_vertical.s;
-            id_textura = 1;
-            resize();
+            /*id_textura = 1;
+            resize();*/
         }
 
         if(keycode == Input.Keys.NUM_1)
         {
+            arma_index = 1;
             /*id_textura = 0;
             resize();*/
         }
 
         if(keycode == Input.Keys.NUM_2)
         {
+            arma_index = 2;
             /*id_textura = 2;
             resize();*/
         }
@@ -151,30 +181,74 @@ public class Player extends  Base_Actor{
             if(keycode == Input.Keys.A )
             {
                 movh = movimiento_horizontal.ninguno;
-                id_textura = 5;
-                resize();
+                /*id_textura = 5;
+                resize();*/
             }
 
             if(keycode == Input.Keys.D)
             {
                 movh = movimiento_horizontal.ninguno;
-                id_textura = 5;
-                resize();
+                /*id_textura = 5;
+                resize();*/
             }
 
             if(keycode == Input.Keys.W)
             {
                 movv = movimiento_vertical.ninguno;
-                id_textura = 5;
-                resize();
+                /*id_textura = 5;
+                resize();*/
             }
 
             if(keycode == Input.Keys.S)
             {
                 movv = movimiento_vertical.ninguno;
-                id_textura = 5;
-                resize();
+                /*id_textura = 5;
+                resize();*/
             }
+    }
+
+    public void touchDown(int screenX, int screenY, int pointer, int button)
+    {
+        if(button == Input.Buttons.LEFT)
+        {
+            switch(arma_index)
+            {
+                case 1: {
+                    id_textura = 0;
+                    resize();
+
+
+                    disparando=true;
+                    break;
+                }
+                case 2: {
+                    id_textura = 2;
+                    resize();
+                    disparando=true;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void touchUp(int screenX, int screenY, int pointer, int button)
+    {
+        if(button == Input.Buttons.LEFT)
+        {
+            switch(arma_index)
+            {
+                case 1: {
+                    disparando=false;
+                    counter = 0;
+                    break;
+                }
+                case 2: {
+                    disparando=false;
+                    counter = 0;
+                    break;
+                }
+            }
+        }
     }
 
 

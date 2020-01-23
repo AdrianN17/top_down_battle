@@ -1,9 +1,6 @@
 package com.mygdx.main;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -27,12 +24,22 @@ public class Base_Juego extends Escena_juego {
 
         debugRenderer = new Box2DDebugRenderer();
 
-        Gdx.graphics.setTitle ("Top Down Battle");
-
     }
 
     @Override
     public void update(float dt) {
+
+        Vector3 vec3_1 =state.getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
+
+
+        float x= player.getX()+ player.getWidth() / 2;
+        float y = player.getY() + player.getHeight() / 2;
+
+        double radio  = Math.atan2(y- vec3_1.y ,x- vec3_1.x ) + Math.PI;
+
+        player.setRotation((float)Math.toDegrees(radio));
+
+
         world.step(1f/60f, 6, 2);
     }
 
@@ -69,16 +76,23 @@ public class Base_Juego extends Escena_juego {
 
     @Override
     public boolean keyTyped(char character) {
+
         return false;
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
+        player.touchDown(screenX,screenY,pointer,button);
+
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+
+        player.touchUp(screenX,screenY,pointer,button);
+
         return false;
     }
 
@@ -89,20 +103,6 @@ public class Base_Juego extends Escena_juego {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-
-
-
-        Vector3 vec3_1 =state.getCamera().unproject(new Vector3(screenX,screenY,0));
-
-
-        float x= player.getX()+ player.getWidth() / 2;
-        float y = player.getY() + player.getHeight() / 2;
-
-        double radio  = Math.atan2(y- vec3_1.y ,x- vec3_1.x ) + Math.PI;
-
-        player.setRotation((float)Math.toDegrees(radio));
-
-
 
         return false;
 

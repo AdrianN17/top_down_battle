@@ -20,7 +20,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.entidad.Player;
 
 public abstract class Escena_juego extends Game implements InputProcessor {
@@ -33,8 +33,6 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
     float map_X, map_Y;
 
-
-
     @Override
     public void create() {
 
@@ -42,8 +40,8 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         orthocamera.setToOrtho(false,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         map = new TmxMapLoader().load("mapa.tmx");
-        state = new Stage(new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), orthocamera));//
-        tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(map,0.5f);
+        state = new Stage(new FitViewport(Constantes.width_G, Constantes.height_G, orthocamera));//
+        tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(map,Constantes.scale);
 
 
         initialize();
@@ -58,8 +56,8 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         int mapPixelWidth = mapWidth * tilePixelWidth;
         int mapPixelHeight = mapHeight * tilePixelHeight;
 
-        map_X = mapPixelWidth*0.5f ;
-        map_Y = mapPixelHeight*0.5f ;
+        map_X = mapPixelWidth*Constantes.scale ;
+        map_Y = mapPixelHeight*Constantes.scale ;
 
         crear_limite(map_X,map_Y);
         crear_objetos();
@@ -79,12 +77,10 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
         update(dt);
 
-        float x = clamp(player.getX(), map_X -  Gdx.graphics.getWidth()/2, 0+ Gdx.graphics.getWidth()/2);
-        float y = clamp(player.getY(), map_Y - Gdx.graphics.getHeight()/2, 0+ Gdx.graphics.getHeight()/2);
+        float x = clamp(player.getX(), map_X - Constantes.width_G/2, 0+ Constantes.width_G/2);
+        float y = clamp(player.getY(), map_Y - Constantes.height_G/2, 0+ Constantes.height_G/2);
 
         state.getCamera().position.set(x, y, 0);
-
-        //System.out.println(state.getCamera().position);
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -140,7 +136,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
             w=(Float)(object.getProperties().get("width"));
             h=(Float)(object.getProperties().get("height"));
 
-            crear_pared(x*0.5f,y*0.5f,w*0.5f,h*0.5f);
+            crear_pared(x*Constantes.scale,y*Constantes.scale,w*Constantes.scale,h*Constantes.scale);
 
         }
 

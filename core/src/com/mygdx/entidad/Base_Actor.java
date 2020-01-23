@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.main.Constantes;
 
 public class Base_Actor extends Actor {
     private Array<TextureRegion> texturas;
@@ -43,7 +44,7 @@ public class Base_Actor extends Actor {
         float width = texturas.get(id_textura).getRegionWidth();
         float height = texturas.get(id_textura).getRegionHeight();
         setSize(width, height);
-
+        setScale(Constantes.scale_player);
 
         setOrigin(width / 2, height / 2);
         setOrigin(width / 2, height / 2);

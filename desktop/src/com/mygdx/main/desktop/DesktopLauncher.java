@@ -8,6 +8,10 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Escena_juego escena = new Base_Juego();
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.width = 640;
+		config.height = 640;
+		config.title = "Top Down Battle";
+		config.resizable = false;
 		new LwjglApplication(escena, config);
 	}
 }

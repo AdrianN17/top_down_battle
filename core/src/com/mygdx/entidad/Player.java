@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.main.Constantes;
+import com.mygdx.modelo.bala;
 import com.mygdx.modelo.userdata_value;
 
 public class Player extends  Base_Actor{
@@ -26,6 +27,7 @@ public class Player extends  Base_Actor{
     protected float counter=0;
 
     public short id;
+    public Balas balas;
 
     RayCastCallback callback;
 
@@ -73,6 +75,10 @@ public class Player extends  Base_Actor{
 
 
         id=0;
+
+        //balas
+
+        balas = new Balas();
 
         //raycast
 
@@ -143,19 +149,24 @@ public class Player extends  Base_Actor{
         }
         else
         {
-            float x,y;
-            double r = Math.toRadians(getRotation());
+            if(arma_index-1>=1)
+            {
+                final  bala bala_elegida = balas.balas.get(arma_index-1);
 
+                if(counter>bala_elegida.velocidad)
+                {
+                    balas.disminuir_bala(2, new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println(bala_elegida.stock);
+                            hacer_raycast();
+                        }
+                    });
 
-            x = getX()+getWidth() / 2+(float)Math.cos(r)*Constantes.raycast_distancia;
-            y = getY()+getHeight() / 2+(float)Math.sin(r)*Constantes.raycast_distancia;
-
-
-            world.rayCast(callback, new Vector2((getX()+getWidth() / 2)/Constantes.PIXEL_IN_METERS,(getY()+getHeight() / 2)/Constantes.PIXEL_IN_METERS), new Vector2(x,y));
+                    counter=0;
+                }
+            }
         }
-
-
-
 
         float mx, my;
         mx = vec.x * body.getMass()* body.getMass() * dt* vel;
@@ -189,36 +200,26 @@ public class Player extends  Base_Actor{
         if(keycode == Input.Keys.D)
         {
             movh = movimiento_horizontal.d;
-            /*id_textura = 1;
-            resize();*/
         }
 
         if(keycode == Input.Keys.W)
         {
             movv = movimiento_vertical.w;
-            /*id_textura = 1;
-            resize();*/
         }
 
         if(keycode == Input.Keys.S)
         {
             movv = movimiento_vertical.s;
-            /*id_textura = 1;
-            resize();*/
         }
 
         if(keycode == Input.Keys.NUM_1)
         {
             arma_index = 1;
-            /*id_textura = 0;
-            resize();*/
         }
 
         if(keycode == Input.Keys.NUM_2)
         {
             arma_index = 2;
-            /*id_textura = 2;
-            resize();*/
         }
     }
 
@@ -227,29 +228,21 @@ public class Player extends  Base_Actor{
             if(keycode == Input.Keys.A )
             {
                 movh = movimiento_horizontal.ninguno;
-                /*id_textura = 5;
-                resize();*/
             }
 
             if(keycode == Input.Keys.D)
             {
                 movh = movimiento_horizontal.ninguno;
-                /*id_textura = 5;
-                resize();*/
             }
 
             if(keycode == Input.Keys.W)
             {
                 movv = movimiento_vertical.ninguno;
-                /*id_textura = 5;
-                resize();*/
             }
 
             if(keycode == Input.Keys.S)
             {
                 movv = movimiento_vertical.ninguno;
-                /*id_textura = 5;
-                resize();*/
             }
     }
 
@@ -263,6 +256,12 @@ public class Player extends  Base_Actor{
                     id_textura = 0;
                     resize();
 
+                    balas.disminuir_bala(1, new Runnable() {
+                        @Override
+                        public void run() {
+                            hacer_raycast();
+                        }
+                    });
 
                     disparando=true;
                     break;
@@ -275,6 +274,22 @@ public class Player extends  Base_Actor{
                 }
             }
         }
+        else if(button == Input.Buttons.RIGHT)
+        {
+            switch(arma_index) {
+                case 1:
+                {
+                    balas.recargar_bala(arma_index );
+                    break;
+                }
+                case 2:
+                {
+                    balas.recargar_bala(arma_index);
+                    break;
+                }
+            }
+        }
+
     }
 
     public void touchUp(int screenX, int screenY, int pointer, int button)
@@ -295,6 +310,20 @@ public class Player extends  Base_Actor{
                 }
             }
         }
+    }
+
+
+    public void hacer_raycast()
+    {
+        float x,y;
+        double r = Math.toRadians(getRotation());
+
+
+        x = getX()+getWidth() / 2+(float)Math.cos(r)*Constantes.raycast_distancia;
+        y = getY()+getHeight() / 2+(float)Math.sin(r)*Constantes.raycast_distancia;
+
+
+        world.rayCast(callback, new Vector2((getX()+getWidth() / 2)/Constantes.PIXEL_IN_METERS,(getY()+getHeight() / 2)/Constantes.PIXEL_IN_METERS), new Vector2(x,y));
     }
 
 

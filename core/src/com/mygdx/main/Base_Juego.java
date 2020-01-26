@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.entidad.Player;
 
 public class Base_Juego extends Escena_juego {
@@ -28,6 +29,17 @@ public class Base_Juego extends Escena_juego {
 
     @Override
     public void update(float dt) {
+
+        long delta = TimeUtils.timeSinceMillis(lastTimeCounted);
+        lastTimeCounted = TimeUtils.millis();
+
+        sinceChange += delta;
+        if(sinceChange >= 1000) {
+            sinceChange = 0;
+            frameRate = Gdx.graphics.getFramesPerSecond();
+        }
+
+
 
         Vector3 vec3_1 =state.getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
 

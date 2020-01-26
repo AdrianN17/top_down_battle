@@ -6,6 +6,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -24,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.entidad.Player;
 import com.mygdx.modelo.userdata_value;
@@ -39,6 +42,12 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     protected ShapeRenderer shapeRenderer;
 
     float map_X, map_Y;
+
+    protected long lastTimeCounted;
+    protected float sinceChange;
+    protected float frameRate;
+    protected BitmapFont font;
+    protected SpriteBatch batch;
 
     @Override
     public void create() {
@@ -70,6 +79,12 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         crear_objetos();
 
         shapeRenderer = new ShapeRenderer();
+
+        lastTimeCounted = TimeUtils.millis();
+        sinceChange = 0;
+        frameRate = Gdx.graphics.getFramesPerSecond();
+        font = new BitmapFont();
+        batch = new SpriteBatch();
 
 
 
@@ -103,6 +118,10 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         //raycast
         dibujar_raycast();
 
+        batch.begin();
+        font.draw(batch, (int)frameRate + " fps", 10, Gdx.graphics.getHeight() - 10);
+        batch.end();
+
     }
 
     public float clamp(float var, float max, float min) {
@@ -125,6 +144,9 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     @Override
     public void dispose()
     {
+        font.dispose();
+        batch.dispose();
+
         world.dispose();
     }
 

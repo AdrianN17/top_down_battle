@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -17,19 +18,21 @@ import com.mygdx.main.Constantes;
 
 public class Base_Actor extends Actor {
     protected Array<TextureRegion> texturas;
-
+    protected float hp = 10;
     protected World world;
     protected Body body;
     protected Fixture fixture;
     protected CircleShape shape;
-    protected enum movimiento_horizontal{ninguno,a,d}
-    protected enum movimiento_vertical{ninguno,w,s}
+    protected enum movimiento_horizontal{ninguno,a,d,todos_lados}
+    protected enum movimiento_vertical{ninguno,w,s,todos_lados}
+    protected BitmapFont font;
 
     public int id_textura = 1;
 
     public Base_Actor(float x, float y, Stage stage)
     {
         super();
+        font = new BitmapFont();
 
         stage.addActor(this);
 
@@ -77,6 +80,7 @@ public class Base_Actor extends Actor {
 
         if (isVisible())
         {
+            font.draw(batch,"Vida : " + hp,  getX()-(0.5f*getWidth()*Constantes.scale), getY()+(getHeight()*2)*Constantes.scale);
             batch.draw(texturas.get(id_textura), getX(), getY(),getOriginX(), getOriginY(),getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
         }
     }

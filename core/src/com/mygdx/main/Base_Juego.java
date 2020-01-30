@@ -1,13 +1,12 @@
 package com.mygdx.main;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.entidad.Player;
+
 
 public class Base_Juego extends Escena_juego {
 
@@ -17,19 +16,18 @@ public class Base_Juego extends Escena_juego {
 
     @Override
     public void initialize() {
-        world = new World(new Vector2(0, 0), true);
-
-        player = new Player(300, 300, state, world);
-
-        Gdx.input.setInputProcessor(this);
-
         debugRenderer = new Box2DDebugRenderer();
+
+        player = new Player(puntos_nacimiento.get(0).x,puntos_nacimiento.get(0).y, state, world);
+
+
 
     }
 
     @Override
     public void update(float dt) {
 
+        //fps
         long delta = TimeUtils.timeSinceMillis(lastTimeCounted);
         lastTimeCounted = TimeUtils.millis();
 
@@ -40,16 +38,10 @@ public class Base_Juego extends Escena_juego {
         }
 
 
-
-        Vector3 vec3_1 =state.getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
-
-
-        float x= player.getX()+ player.getWidth() / 2;
-        float y = player.getY() + player.getHeight() / 2;
-
-        double radio  = Math.atan2(y- vec3_1.y ,x- vec3_1.x ) + Math.PI;
-
-        player.setRotation((float)Math.toDegrees(radio));
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop)
+        {
+            player.get_angulo(state.getCamera(),Gdx.input.getX(),Gdx.input.getY());
+        }
 
 
         world.step(1f/60f, 6, 2);
@@ -57,14 +49,20 @@ public class Base_Juego extends Escena_juego {
 
     @Override
     public boolean keyDown(int keycode) {
-        player.keyDown(keycode);
+
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop)
+        {
+            player.keyDown(keycode);
+        }
 
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        player.keyUp(keycode);
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop) {
+            player.keyUp(keycode);
+        }
 
         return false;
     }
@@ -74,7 +72,7 @@ public class Base_Juego extends Escena_juego {
     {
         state.getBatch().setProjectionMatrix(state.getCamera().combined);
 
-        // Scale down the sprite batches projection matrix to box2D size
+
         debugMatrix = state.getBatch().getProjectionMatrix().cpy().scale(Constantes.PIXEL_IN_METERS,
                 Constantes.PIXEL_IN_METERS, 0);
 
@@ -94,22 +92,62 @@ public class Base_Juego extends Escena_juego {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop)
+        {
+            player.presionar_pc(button);
+        }
+        else if(Gdx.app.getType() == Application.ApplicationType.Android)
+        {
+            if (pointer == 0) {
+                player.set_inicial_vector(screenX,screenY);
+            }
+        }
 
-        player.touchDown(screenX,screenY,pointer,button);
+
 
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-
-        player.touchUp(screenX,screenY,pointer,button);
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop)
+        {
+            player.soltar_pc(button);
+        }
+        else if(Gdx.app.getType() == Application.ApplicationType.Android)
+        {
+            if(pointer == 0)
+            {
+                player.soltar_mover_android();
+            }
+            else if(pointer == 1)
+            {
+                player.soltar_android(pointer);
+            }
+        }
 
         return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+
+        if(Gdx.app.getType() == Application.ApplicationType.Android)
+        {
+
+            if(pointer == 0)
+            {
+                player.get_angulo_android(state.getCamera(),screenX,screenY);
+                player.presionar_mover_android();
+            }
+            else if(pointer == 1)
+            {
+                player.get_angulo(state.getCamera(),screenX,screenY);
+                player.presionar_android(pointer);
+            }
+        }
+
+
         return false;
     }
 
@@ -124,6 +162,8 @@ public class Base_Juego extends Escena_juego {
     public boolean scrolled(int amount) {
         return false;
     }
+
+
 
 
 

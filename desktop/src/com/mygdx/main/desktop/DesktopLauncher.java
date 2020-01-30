@@ -12,6 +12,8 @@ public class DesktopLauncher {
 		config.height = 640;
 		config.title = "Top Down Battle";
 		config.resizable = false;
+		config.x = 0;
+		config.y = 0;
 		new LwjglApplication(escena, config);
 	}
 }

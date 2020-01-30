@@ -101,6 +101,11 @@ public class Base_Juego extends Escena_juego {
             if (pointer == 0) {
                 player.set_inicial_vector(screenX,screenY);
             }
+            else if(pointer == 1)
+            {
+                player.get_angulo(state.getCamera(),screenX,screenY);
+                //player.set_inicial_vector_2(screenX,screenY);
+            }
         }
 
 
@@ -143,7 +148,7 @@ public class Base_Juego extends Escena_juego {
             else if(pointer == 1)
             {
                 player.get_angulo(state.getCamera(),screenX,screenY);
-                player.presionar_android(pointer);
+                player.presionar_android();
             }
         }
 

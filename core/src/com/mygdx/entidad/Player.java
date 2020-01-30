@@ -36,7 +36,8 @@ public class Player extends  Base_Actor{
     RayCastCallback callback;
 
     protected double radio_android=0;
-    protected Vector2 punto_inicio= new Vector2();;
+    protected Vector2 punto_inicio= new Vector2();
+    protected Vector2 punto_inicio_2= new Vector2();;
 
     public Player(float x, float y, Stage stage, World world) {
         super(x, y, stage);
@@ -334,7 +335,7 @@ public class Player extends  Base_Actor{
         }
     }
 
-    public void presionar_android(int pointer)
+    public void presionar_android()
     {
         switch(arma_index)
         {
@@ -409,10 +410,20 @@ public class Player extends  Base_Actor{
         Vector3 vec3_1 =camera.unproject(new Vector3(x,y,0));
         Vector3 vec3_2 =camera.unproject(new Vector3(punto_inicio.x,punto_inicio.y,0));
 
-        double radio  = Math.atan2(vec3_2.y- vec3_1.y ,vec3_2.x- vec3_1.x ) + Math.PI;
+        double radio  = Math.atan2(vec3_2.y- vec3_1.y ,vec3_2.x-vec3_1.x ) + Math.PI;
 
 
         this.radio_android =  (float)Math.toDegrees(radio);
+    }
+
+    public void get_angulo_android_2(Camera camera,int x,int y)
+    {
+        Vector3 vec3_1 =camera.unproject(new Vector3(x,y,0));
+        Vector3 vec3_2 =camera.unproject(new Vector3(punto_inicio_2.x,punto_inicio_2.y,0));
+
+        double radio  = Math.atan2(vec3_2.y- vec3_1.y ,vec3_2.x-vec3_1.x ) + Math.PI;
+
+        setRotation((float)Math.toDegrees(radio));
     }
 
     public void presionar_mover_android()
@@ -430,6 +441,11 @@ public class Player extends  Base_Actor{
     public void set_inicial_vector(int x,int y)
     {
         punto_inicio.set(x,y);
+    }
+
+    public void set_inicial_vector_2(int x, int y)
+    {
+        punto_inicio_2.set(x,y);
     }
 
 

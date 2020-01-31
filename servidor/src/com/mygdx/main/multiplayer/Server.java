@@ -1,8 +1,9 @@
-package com.mygdx.multiplayer;
+package com.mygdx.main.multiplayer;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -15,13 +16,24 @@ public class Server {
         socket = new DatagramSocket(port,InetAddress.getByName(ip));
     }
 
-    public void update()
-    {
+    public void update() throws IOException {
+
+
+        byte[] receiveData = new byte[socket.getReceiveBufferSize()];
+        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+        socket.receive(receivePacket);
+
+
+
+
+
+
+
 
     }
 
     public void destroy()
     {
-
+        socket.close();
     }
 }

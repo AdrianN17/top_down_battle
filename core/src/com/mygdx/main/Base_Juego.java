@@ -7,6 +7,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.entidad.Player;
 
+import java.io.IOException;
+
 
 public class Base_Juego extends Escena_juego {
 

@@ -29,7 +29,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.entidad.Player;
 import com.mygdx.modelo.userdata_value;
-
 import java.util.ArrayList;
 
 public abstract class Escena_juego extends Game implements InputProcessor {
@@ -51,6 +50,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     protected SpriteBatch batch;
 
     protected ArrayList<Vector2> puntos_nacimiento;
+
 
     @Override
     public void create() {
@@ -99,6 +99,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         batch = new SpriteBatch();
 
         initialize();
+
 
     }
 
@@ -157,10 +158,12 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     @Override
     public void dispose()
     {
+
         font.dispose();
         batch.dispose();
 
         world.dispose();
+
     }
 
     public void crear_objetos()

@@ -60,6 +60,8 @@ project(":servidor") {
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+        implementation 'org.apache.commons:commons-lang3:3.5'
+
 
     }
 }
@@ -94,6 +96,8 @@ project(":core") {
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        implementation 'org.apache.commons:commons-lang3:3.5'
+        compile 'com.esotericsoftware:kryonet:2.22.0-RC1'
         
     }
 }

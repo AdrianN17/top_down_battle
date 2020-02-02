@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.utils.TimeUtils;
+
 
 
 
@@ -28,15 +28,9 @@ public class Base_Juego extends Escena_juego {
     @Override
     public void update(float dt) {
 
-        //fps
-        long delta = TimeUtils.timeSinceMillis(lastTimeCounted);
-        lastTimeCounted = TimeUtils.millis();
 
-        sinceChange += delta;
-        if(sinceChange >= 1000) {
-            sinceChange = 0;
-            frameRate = Gdx.graphics.getFramesPerSecond();
-        }
+
+
 
         if(index_player!= -1)
         {
@@ -53,11 +47,6 @@ public class Base_Juego extends Escena_juego {
 
     @Override
     public boolean keyDown(int keycode) {
-
-        if(keycode == Input.Keys.G)
-        {
-            cliente.enviar_mensaje();
-        }
 
 
         if(Gdx.app.getType() == Application.ApplicationType.Desktop)

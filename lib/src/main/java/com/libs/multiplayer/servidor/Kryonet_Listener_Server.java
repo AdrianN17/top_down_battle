@@ -1,29 +1,26 @@
-package com.mygdx.main.launcher;
+package com.libs.multiplayer.servidor;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.mygdx.entidad.Player;
-import com.mygdx.main.entidades.entidad.player;
-import com.mygdx.multiplayer_cliente.Event;
-import com.mygdx.multiplayer_modelos.data_inicial;
+import com.libs.modelos_principal.Event;
+import com.libs.modelos_principal.Event_trigger;
+import com.libs.runnable.custom_runnable;
 
-import org.apache.commons.lang3.SerializationUtils;
 
 public class Kryonet_Listener_Server extends Listener {
 
-    public Servidor_libgdx base;
+    public Array<Event_trigger> events_list;
 
-    public Kryonet_Listener_Server(Servidor_libgdx base)
-    {
-        this.base = base;
+    public Kryonet_Listener_Server() {
+        events_list = new Array();
     }
 
 
     public void connected(final Connection connection)
     {
-        System.out.println("cliente conectado " + connection.getID());
+        /*System.out.println("cliente conectado " + connection.getID());
 
         //crear usuario
 
@@ -44,7 +41,7 @@ public class Kryonet_Listener_Server extends Listener {
         event.name = "Inicializar";
         event.obj = SerializationUtils.serialize(data);
         //enviar
-        connection.sendUDP(event);
+        connection.sendUDP(event);*/
 
     }
 
@@ -55,10 +52,26 @@ public class Kryonet_Listener_Server extends Listener {
 
     public void received (Connection connection, Object object) {
         if (object instanceof Event) {
-            Event request = (Event)object;
-            System.out.println(request.name);
+            Event ev = (Event) object;
+            System.out.println(ev.name);
+            received_list(connection,ev);
+
+        }
+    }
+
+    public void received_list(final Connection connection_1 , final Event event) {
+        for (final Event_trigger et : events_list) {
 
 
+            if (et.name.equals(event.name)) {
+                Gdx.app.postRunnable(new custom_runnable() {
+                    public void run() {
+                        et.function.connection = connection_1;
+                        et.function.obj = event.obj;
+                        et.function.run();
+                    }
+                });
+            }
         }
     }
 

@@ -25,21 +25,17 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
+import com.libs.multiplayer.cliente.Cliente;
+import com.libs.timer.Timer;
 import com.mygdx.entidad.Player;
-import com.mygdx.modelo.userdata_value;
-import com.mygdx.multiplayer_cliente.Cliente;
-import com.mygdx.multiplayer_cliente.Event;
-
-import java.util.ArrayList;
+import com.mygdx.main.entidades.modelo.userdata_value;
 
 public abstract class Escena_juego extends Game implements InputProcessor {
     public Stage state;
     public World world;
-    public ArrayList<Player> list_player;
+    public Array<Player> list_player;
     TiledMap map;
     TiledMapRenderer tiledMapRenderer;
     OrthographicCamera orthocamera;
@@ -58,12 +54,14 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
     public Cliente cliente;
 
+    public Timer timer;
+
 
     @Override
     public void create() {
-
-        cliente = new Cliente(this);
-        list_player = new ArrayList<>();
+        timer = new Timer();
+        cliente = new Cliente();
+        list_player = new Array<>();
 
 
         world = new World(new Vector2(0, 0), true);
@@ -96,13 +94,19 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
         shapeRenderer = new ShapeRenderer();
 
-        lastTimeCounted = TimeUtils.millis();
         sinceChange = 0;
         frameRate = Gdx.graphics.getFramesPerSecond();
         font = new BitmapFont();
         batch = new SpriteBatch();
 
         initialize();
+
+        timer.Every("get_fps", 1, new Runnable() {
+            @Override
+            public void run() {
+                frameRate = Gdx.graphics.getFramesPerSecond();
+            }
+        });
 
 
     }
@@ -118,6 +122,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         state.act();
 
+        timer.Update(dt);
         update(dt);
 
         if(index_player!= -1)

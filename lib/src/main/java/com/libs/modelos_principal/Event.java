@@ -1,4 +1,4 @@
-package com.mygdx.multiplayer_cliente;
+package com.libs.modelos_principal;
 
 public class Event {
 

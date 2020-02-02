@@ -1,4 +1,4 @@
-package com.mygdx.multiplayer_modelos;
+package com.libs.modelos;
 
 import java.io.Serializable;
 

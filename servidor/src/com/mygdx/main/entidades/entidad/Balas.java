@@ -1,16 +1,15 @@
-package com.mygdx.entidad;
+package com.mygdx.main.entidades.entidad;
 
-import com.mygdx.modelo.bala;
-
-import java.util.ArrayList;
+import com.badlogic.gdx.utils.Array;
+import com.mygdx.main.entidades.modelo.bala;
 
 public class Balas {
 
-    public ArrayList<bala> balas;
+    public Array<bala> balas;
 
     public Balas()
     {
-        balas = new ArrayList();
+        balas = new Array();
 
         balas.add(new bala( 7,7,49,49,1,0,true));
         balas.add(new bala( 30,30,120,120,1,0.5f,true));

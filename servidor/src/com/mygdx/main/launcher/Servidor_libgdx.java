@@ -4,48 +4,27 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.esotericsoftware.kryonet.Server;
-import com.mygdx.main.entidades.entidad.player;
-import com.mygdx.multiplayer_cliente.Event;
+import com.badlogic.gdx.utils.Array;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
+import com.libs.multiplayer.servidor.Servidor;
+import com.mygdx.main.entidades.entidad.player;
 
 public class Servidor_libgdx extends Game implements InputProcessor {
 
-    public Server server ;
+    public Servidor server;
     public World world;
 
-    public ArrayList<player> list_player;
+    public Array<player> list_player;
 
 
     @Override
     public void create() {
+        server = new Servidor();
 
-        list_player = new ArrayList<>();
+        list_player = new Array<>();
 
         world = new World(new Vector2(0, 0), true);
 
-
-        server = new Server();
-
-        server.start();
-
-        try {
-            InetSocketAddress socket1 = new InetSocketAddress("192.168.0.3", 22122);
-            InetSocketAddress socket2 = new InetSocketAddress("192.168.0.3", 22123);
-
-            server.bind(socket1, socket2);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        server.getKryo().register(Event.class );
-        server.getKryo().register(byte[].class);
-
-        server.addListener(new Kryonet_Listener_Server(this));
     }
 
     @Override

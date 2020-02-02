@@ -14,8 +14,9 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.main.Constantes;
-import com.mygdx.modelo.bala;
-import com.mygdx.modelo.userdata_value;
+import com.mygdx.main.entidades.entidad.Balas;
+import com.mygdx.main.entidades.modelo.bala;
+import com.mygdx.main.entidades.modelo.userdata_value;
 
 public class Player extends  Base_Actor{
 
@@ -172,7 +173,7 @@ public class Player extends  Base_Actor{
         {
             if(arma_index-1>=1)
             {
-                final  bala bala_elegida = balas.balas.get(arma_index-1);
+                final bala bala_elegida = balas.balas.get(arma_index-1);
 
                 if(counter>bala_elegida.velocidad)
                 {

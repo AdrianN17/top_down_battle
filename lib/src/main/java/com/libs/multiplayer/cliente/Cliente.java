@@ -1,18 +1,18 @@
-package com.mygdx.multiplayer_cliente;
+package com.libs.multiplayer.cliente;
 
+import com.libs.modelos_principal.Event;
 import com.esotericsoftware.kryonet.Client;
-import com.mygdx.main.Base_Juego;
-import com.mygdx.main.Escena_juego;
+import com.libs.modelos_principal.Event_trigger;
+import com.libs.runnable.custom_runnable;
 
 import java.io.IOException;
 
-public class Cliente  {
+public class Cliente {
     protected Client client;
-    public Escena_juego base;
+    public Kryonet_Listener_Client listener_list;
 
-    public Cliente(Escena_juego base)
+    public Cliente()
     {
-        this.base =  base;
 
         client =  new Client();
         client.start();
@@ -22,17 +22,17 @@ public class Cliente  {
             e.printStackTrace();
         }
 
-        client.addListener(new Kryonet_Listener_Cliente(base));
+        listener_list = new Kryonet_Listener_Client();
+
+        client.addListener(listener_list);
 
         client.getKryo().register(Event.class);
         client.getKryo().register(byte[].class);
     }
 
-    public void enviar_mensaje()
+    public void add_trigger(String name, custom_runnable function)
     {
-        Event request = new Event();
-        request.name = "Cliente saluda";
-        client.sendUDP(request);
+        listener_list.events_list.add(new Event_trigger(name,function));
     }
 
     public void close()

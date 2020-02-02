@@ -1,4 +1,4 @@
-package com.mygdx.modelo;
+package com.mygdx.main.entidades.modelo;
 
 public class userdata_value {
     private String tipo;

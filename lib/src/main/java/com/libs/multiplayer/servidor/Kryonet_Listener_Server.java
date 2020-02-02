@@ -7,7 +7,6 @@ import com.esotericsoftware.kryonet.Listener;
 import com.libs.modelos_principal.Event;
 import com.libs.runnable.custom_runnable;
 
-import org.apache.commons.lang3.SerializationUtils;
 
 
 public class Kryonet_Listener_Server extends Listener {
@@ -65,7 +64,7 @@ public class Kryonet_Listener_Server extends Listener {
 
     public void received_list(final Connection connection , final Event event) {
 
-        final byte[] obj =  event.obj;
+        final Object obj =  event.obj;
 
 
         if(events_list.containsKey(event.name))
@@ -74,7 +73,7 @@ public class Kryonet_Listener_Server extends Listener {
                  public void run() {
                  custom_runnable cr = events_list.get(event.name);
                  cr.setConnection(connection);
-                 cr.setObj(SerializationUtils.deserialize(obj));
+                 cr.setObj(obj);
 
                  cr.run();
                  }

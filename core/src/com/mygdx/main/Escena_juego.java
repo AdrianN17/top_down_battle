@@ -27,6 +27,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.libs.modelos.array_data_inicial;
 import com.libs.modelos.data_inicial;
 import com.libs.modelos_principal.Event;
 import com.libs.multiplayer.cliente.Cliente;
@@ -328,6 +329,14 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
     public void listener()
     {
+        //class
+
+        cliente.add_classes(new Array<Class>(){{
+            add(Array.class);
+            add(data_inicial.class);
+            add(array_data_inicial.class);
+        }});
+
         //trigger
 
         cliente.add_trigger("Inicializar", new custom_runnable(){
@@ -335,12 +344,16 @@ public abstract class Escena_juego extends Game implements InputProcessor {
             public void run()
             {
 
-                if(this.obj instanceof  data_inicial) {
-                    data_inicial data = (data_inicial) this.obj;
+                if(this.obj instanceof array_data_inicial) {
+                    array_data_inicial data = (array_data_inicial) this.obj;
 
                     index_player = data.id;
 
-                    list_player.add(new Player(data.x, data.y, state, world, data.id));
+                    for(data_inicial di :data.array_data)
+                    {
+                        list_player.add(new Player(di.x, di.y, state, world, di.id));
+                    }
+
                 }
                 else
                 {

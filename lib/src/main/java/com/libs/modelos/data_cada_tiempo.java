@@ -12,7 +12,7 @@ public class data_cada_tiempo implements Serializable {
     public int movh;
     public int movv;
 
-    public data_cada_tiempo(int id, float x, float y, int hp, float angulo, int movh, int movv) {
+    /*public data_cada_tiempo(int id, float x, float y, int hp, float angulo, int movh, int movv) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -20,5 +20,5 @@ public class data_cada_tiempo implements Serializable {
         this.angulo = angulo;
         this.movh = movh;
         this.movv = movv;
-    }
+    }*/
 }

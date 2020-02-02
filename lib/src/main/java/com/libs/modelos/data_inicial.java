@@ -7,9 +7,9 @@ public class data_inicial implements Serializable {
     public float x;
     public float y;
 
-    public data_inicial(int id, float x, float y) {
+    /*public data_inicial(int id, float x, float y) {
         this.id = id;
         this.x = x;
         this.y = y;
-    }
+    }*/
 }

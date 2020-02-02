@@ -2,7 +2,6 @@ package com.libs.multiplayer.cliente;
 
 import com.libs.modelos_principal.Event;
 import com.esotericsoftware.kryonet.Client;
-import com.libs.modelos_principal.Event_trigger;
 import com.libs.runnable.custom_runnable;
 
 import java.io.IOException;
@@ -32,13 +31,14 @@ public class Cliente {
 
     public void add_trigger(String name, custom_runnable function)
     {
-        listener_list.events_list.add(new Event_trigger(name,function));
+        listener_list.events_list.put(name,function);
     }
 
     public void close()
     {
         client.close();
     }
+
 
 
 }

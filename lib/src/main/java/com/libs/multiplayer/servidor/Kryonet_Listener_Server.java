@@ -1,78 +1,84 @@
 package com.libs.multiplayer.servidor;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.libs.modelos_principal.Event;
-import com.libs.modelos_principal.Event_trigger;
 import com.libs.runnable.custom_runnable;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 
 public class Kryonet_Listener_Server extends Listener {
 
-    public Array<Event_trigger> events_list;
+    public ArrayMap<String,custom_runnable> events_list;
 
     public Kryonet_Listener_Server() {
-        events_list = new Array();
+        events_list = new ArrayMap();
     }
 
 
     public void connected(final Connection connection)
     {
-        /*System.out.println("cliente conectado " + connection.getID());
+        Gdx.app.log("Cliente conectado al server" , " Num : " +  connection.getID());
+        if(events_list.containsKey("Connect"))
+        {
+            Gdx.app.postRunnable(new Runnable() {
+                public void run() {
 
-        //crear usuario
+                    custom_runnable cr = events_list.get("Connect");
+                    cr.setConnection(connection);
 
-        Gdx.app.postRunnable(new Runnable() {
-            public void run() {
-                Vector2 vec = Constantes_Server.punto_inicio.get(connection.getID()-1);
-
-                base.list_player.add(new player(vec.x,vec.y, connection.getID(),base.world));
-            }});
-
-
-
-        Vector2 posicion = Constantes_Server.punto_inicio.get(connection.getID());
-        data_inicial data = new data_inicial(connection.getID(),posicion.x,posicion.y);
-
-
-        Event event = new Event();
-        event.name = "Inicializar";
-        event.obj = SerializationUtils.serialize(data);
-        //enviar
-        connection.sendUDP(event);*/
-
+                    cr.run();
+                }
+            });
+        }
     }
 
-    public void disconnected(Connection connection)
+    public void disconnected(final Connection connection)
     {
-        System.out.println("cliente desconectado");
+        Gdx.app.log("Cliente desconectado del server" , " Num : " +  connection.getID());
+
+        if(events_list.containsKey("Disconnect"))
+        {
+            Gdx.app.postRunnable(new Runnable() {
+                public void run() {
+
+                    custom_runnable cr = events_list.get("Connect");
+                    cr.setConnection(connection);
+
+                    cr.run();
+                }
+            });
+        }
     }
 
     public void received (Connection connection, Object object) {
         if (object instanceof Event) {
             Event ev = (Event) object;
-            System.out.println(ev.name);
+            Gdx.app.log("Servidor Evento" , " Name : " + ev.name);
             received_list(connection,ev);
 
         }
     }
 
-    public void received_list(final Connection connection_1 , final Event event) {
-        for (final Event_trigger et : events_list) {
+    public void received_list(final Connection connection , final Event event) {
+
+        final byte[] obj =  event.obj;
 
 
-            if (et.name.equals(event.name)) {
-                Gdx.app.postRunnable(new custom_runnable() {
-                    public void run() {
-                        et.function.connection = connection_1;
-                        et.function.obj = event.obj;
-                        et.function.run();
-                    }
-                });
-            }
+        if(events_list.containsKey(event.name))
+        {
+            Gdx.app.postRunnable(new Runnable() {
+                 public void run() {
+                 custom_runnable cr = events_list.get(event.name);
+                 cr.setConnection(connection);
+                 cr.setObj(SerializationUtils.deserialize(obj));
+
+                 cr.run();
+                 }
+             });
         }
     }
-
 }

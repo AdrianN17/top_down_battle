@@ -2,7 +2,6 @@ package com.libs.multiplayer.servidor;
 
 import com.esotericsoftware.kryonet.Server;
 import com.libs.modelos_principal.Event;
-import com.libs.modelos_principal.Event_trigger;
 import com.libs.runnable.custom_runnable;
 
 import java.io.IOException;
@@ -36,12 +35,13 @@ public class Servidor {
 
     public void add_trigger(String name, custom_runnable function)
     {
-        listener_list.events_list.add(new Event_trigger(name,function));
+        listener_list.events_list.put(name,function);
     }
 
     public void close()
     {
         server.close();
     }
+
 
 }

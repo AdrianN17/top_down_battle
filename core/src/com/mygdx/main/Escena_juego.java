@@ -27,10 +27,15 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.libs.modelos.data_inicial;
+import com.libs.modelos_principal.Event;
 import com.libs.multiplayer.cliente.Cliente;
+import com.libs.runnable.custom_runnable;
 import com.libs.timer.Timer;
 import com.mygdx.entidad.Player;
+import com.mygdx.main.entidades.entidad.player;
 import com.mygdx.main.entidades.modelo.userdata_value;
+import com.mygdx.main.launcher.Constantes_Server;
 
 public abstract class Escena_juego extends Game implements InputProcessor {
     public Stage state;
@@ -61,6 +66,9 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     public void create() {
         timer = new Timer();
         cliente = new Cliente();
+
+        listener();
+
         list_player = new Array<>();
 
 
@@ -318,6 +326,30 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         shapeRenderer.end();*/
     }
 
+    public void listener()
+    {
+        //trigger
+
+        cliente.add_trigger("Inicializar", new custom_runnable(){
+            @Override
+            public void run()
+            {
+
+                if(this.obj instanceof  data_inicial) {
+                    data_inicial data = (data_inicial) this.obj;
+
+                    index_player = data.id;
+
+                    list_player.add(new Player(data.x, data.y, state, world, data.id));
+                }
+                else
+                {
+                    Gdx.app.log("trigger","Error al instanciar");
+                }
+
+
+            }} );
+    }
 
 }
 

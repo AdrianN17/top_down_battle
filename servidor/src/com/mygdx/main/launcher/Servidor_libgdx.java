@@ -6,10 +6,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+import com.libs.modelos.data_inicial;
+import com.libs.modelos_principal.Event;
 import com.libs.multiplayer.servidor.Servidor;
+import com.libs.runnable.custom_runnable;
 import com.mygdx.main.entidades.entidad.player;
 
-public class Servidor_libgdx extends Game implements InputProcessor {
+import org.apache.commons.lang3.SerializationUtils;
+
+public class Servidor_libgdx extends Game {
 
     public Servidor server;
     public World world;
@@ -25,6 +30,8 @@ public class Servidor_libgdx extends Game implements InputProcessor {
 
         world = new World(new Vector2(0, 0), true);
 
+        listener();
+
     }
 
     @Override
@@ -39,43 +46,30 @@ public class Servidor_libgdx extends Game implements InputProcessor {
         server.close();
     }
 
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
+    public void listener()
+    {
+        //trigger
+        server.add_trigger("Connect", new custom_runnable(){
+            @Override
+            public void run()
+            {
+                //para el servidor
+                int id = this.connection.getID()-1;
+                Vector2 vec = Constantes_Server.punto_inicio.get(id);
 
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
+                list_player.add(new player(vec.x,vec.y, id,world));
 
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
+                //para el cliente
 
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
+                Vector2 posicion = Constantes_Server.punto_inicio.get(id);
+                data_inicial data = new data_inicial(id,posicion.x,posicion.y);
 
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
+                Event event = new Event();
+                event.name = "Inicializar";
+                event.obj = SerializationUtils.serialize(data);
+                System.out.println(event.obj.getClass().getName());
+                this.connection.sendUDP(event);
 
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
+            }} );
     }
 }

@@ -30,7 +30,7 @@ public class Player extends  Base_Actor{
     protected short arma_index=0;
     protected float counter=0;
 
-    public short id;
+    public int id;
     public Balas balas;
 
     RayCastCallback callback;
@@ -39,8 +39,10 @@ public class Player extends  Base_Actor{
     protected Vector2 punto_inicio= new Vector2();
     protected Vector2 punto_inicio_2= new Vector2();;
 
-    public Player(float x, float y, Stage stage, World world) {
+    public Player(float x, float y, Stage stage, World world,final int id) {
         super(x, y, stage);
+
+        this.id = id;
 
         this.world=world;
 
@@ -81,8 +83,6 @@ public class Player extends  Base_Actor{
         movh = movimiento_horizontal.ninguno;
         movv = movimiento_vertical.ninguno;
 
-
-        id=0;
 
         //balas
 

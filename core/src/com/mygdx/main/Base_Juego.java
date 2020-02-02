@@ -2,12 +2,11 @@ package com.mygdx.main;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.mygdx.entidad.Player;
 
-import java.io.IOException;
 
 
 public class Base_Juego extends Escena_juego {
@@ -20,7 +19,7 @@ public class Base_Juego extends Escena_juego {
     public void initialize() {
         debugRenderer = new Box2DDebugRenderer();
 
-        player = new Player(puntos_nacimiento.get(0).x,puntos_nacimiento.get(0).y, state, world);
+        //player = new Player(puntos_nacimiento.get(0).x,puntos_nacimiento.get(0).y, state, world);
 
 
 
@@ -39,11 +38,14 @@ public class Base_Juego extends Escena_juego {
             frameRate = Gdx.graphics.getFramesPerSecond();
         }
 
-
-        if(Gdx.app.getType() == Application.ApplicationType.Desktop)
+        if(index_player!= -1)
         {
-            player.get_angulo(state.getCamera(),Gdx.input.getX(),Gdx.input.getY());
+            if(Gdx.app.getType() == Application.ApplicationType.Desktop)
+            {
+                list_player.get(index_player).get_angulo(state.getCamera(),Gdx.input.getX(),Gdx.input.getY());
+            }
         }
+
 
 
         world.step(1f/60f, 6, 2);
@@ -52,9 +54,19 @@ public class Base_Juego extends Escena_juego {
     @Override
     public boolean keyDown(int keycode) {
 
+        if(keycode == Input.Keys.G)
+        {
+            cliente.enviar_mensaje();
+        }
+
+
         if(Gdx.app.getType() == Application.ApplicationType.Desktop)
         {
-            player.keyDown(keycode);
+            if(index_player!= -1)
+            {
+                list_player.get(index_player).keyDown(keycode);
+            }
+
         }
 
         return false;
@@ -63,7 +75,12 @@ public class Base_Juego extends Escena_juego {
     @Override
     public boolean keyUp(int keycode) {
         if(Gdx.app.getType() == Application.ApplicationType.Desktop) {
-            player.keyUp(keycode);
+            if(index_player!= -1)
+            {
+                list_player.get(index_player).keyUp(keycode);
+            }
+
+
         }
 
         return false;
@@ -96,17 +113,29 @@ public class Base_Juego extends Escena_juego {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(Gdx.app.getType() == Application.ApplicationType.Desktop)
         {
-            player.presionar_pc(button);
+            if(index_player!= -1)
+            {
+                list_player.get(index_player).presionar_pc(button);
+            }
+
         }
         else if(Gdx.app.getType() == Application.ApplicationType.Android)
         {
             if (pointer == 0) {
-                player.set_inicial_vector(screenX,screenY);
+                if(index_player!= -1)
+                {
+                    list_player.get(index_player).set_inicial_vector(screenX,screenY);
+                }
+
             }
             else if(pointer == 1)
             {
-                player.get_angulo(state.getCamera(),screenX,screenY);
-                //player.set_inicial_vector_2(screenX,screenY);
+                if(index_player!= -1)
+                {
+                    list_player.get(index_player).get_angulo(state.getCamera(),screenX,screenY);
+                    //player.set_inicial_vector_2(screenX,screenY);
+                }
+
             }
         }
 
@@ -119,17 +148,29 @@ public class Base_Juego extends Escena_juego {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if(Gdx.app.getType() == Application.ApplicationType.Desktop)
         {
-            player.soltar_pc(button);
+            if(index_player!= -1)
+            {
+                list_player.get(index_player).soltar_pc(button);
+            }
+
         }
         else if(Gdx.app.getType() == Application.ApplicationType.Android)
         {
             if(pointer == 0)
             {
-                player.soltar_mover_android();
+                if(index_player!= -1)
+                {
+                    list_player.get(index_player).soltar_mover_android();
+                }
+
             }
             else if(pointer == 1)
             {
-                player.soltar_android(pointer);
+                if(index_player!= -1)
+                {
+                    list_player.get(index_player).soltar_android(pointer);
+                }
+
             }
         }
 
@@ -144,13 +185,21 @@ public class Base_Juego extends Escena_juego {
 
             if(pointer == 0)
             {
-                player.get_angulo_android(state.getCamera(),screenX,screenY);
-                player.presionar_mover_android();
+                if(index_player!= -1)
+                {
+                    list_player.get(index_player).get_angulo_android(state.getCamera(),screenX,screenY);
+                    list_player.get(index_player).presionar_mover_android();
+                }
+
             }
             else if(pointer == 1)
             {
-                player.get_angulo(state.getCamera(),screenX,screenY);
-                player.presionar_android();
+                if(index_player!= -1)
+                {
+                    list_player.get(index_player).get_angulo(state.getCamera(),screenX,screenY);
+                    list_player.get(index_player).presionar_android();
+                }
+
             }
         }
 
@@ -169,10 +218,4 @@ public class Base_Juego extends Escena_juego {
     public boolean scrolled(int amount) {
         return false;
     }
-
-
-
-
-
-
 }

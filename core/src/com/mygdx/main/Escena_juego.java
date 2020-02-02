@@ -27,14 +27,19 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.mygdx.entidad.Player;
 import com.mygdx.modelo.userdata_value;
+import com.mygdx.multiplayer_cliente.Cliente;
+import com.mygdx.multiplayer_cliente.Event;
+
 import java.util.ArrayList;
 
 public abstract class Escena_juego extends Game implements InputProcessor {
-    Stage state;
-    World world;
-    Player player;
+    public Stage state;
+    public World world;
+    public ArrayList<Player> list_player;
     TiledMap map;
     TiledMapRenderer tiledMapRenderer;
     OrthographicCamera orthocamera;
@@ -49,13 +54,17 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     protected BitmapFont font;
     protected SpriteBatch batch;
 
-    protected ArrayList<Vector2> puntos_nacimiento;
+    public int index_player = -1;
+
+    public Cliente cliente;
 
 
     @Override
     public void create() {
 
-        puntos_nacimiento = new ArrayList<>();
+        cliente = new Cliente(this);
+        list_player = new ArrayList<>();
+
 
         world = new World(new Vector2(0, 0), true);
         Gdx.input.setInputProcessor(this);
@@ -69,9 +78,6 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         state = new Stage(new FitViewport(Constantes.width_G, Constantes.height_G, orthocamera));//
         tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(map,Constantes.scale);
 
-
-
-
         MapProperties prop = map.getProperties();
 
         int mapWidth = prop.get("width", Integer.class);
@@ -84,8 +90,6 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
         map_X = mapPixelWidth*Constantes.scale ;
         map_Y = mapPixelHeight*Constantes.scale ;
-
-        System.out.println(map_X + " , " + map_Y);
 
         crear_limite(map_X,map_Y);
         crear_objetos();
@@ -116,10 +120,14 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
         update(dt);
 
-        float x = clamp(player.getX(), map_X - Constantes.width_G/2, 0+ Constantes.width_G/2);
-        float y = clamp(player.getY(), map_Y - Constantes.height_G/2, 0+ Constantes.height_G/2);
+        if(index_player!= -1)
+        {
+            float x = clamp(list_player.get(index_player).getX(), map_X - Constantes.width_G/2, 0+ Constantes.width_G/2);
+            float y = clamp(list_player.get(index_player).getY(), map_Y - Constantes.height_G/2, 0+ Constantes.height_G/2);
 
-        state.getCamera().position.set(x,y, 0);
+            state.getCamera().position.set(x,y, 0);
+        }
+
 
         tiledMapRenderer.setView(orthocamera);
         tiledMapRenderer.render();
@@ -129,7 +137,11 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
 
         //raycast
-        dibujar_raycast();
+        if(index_player!= -1)
+        {
+            dibujar_raycast();
+        }
+
         //dinujar_puntos();
 
         batch.begin();
@@ -158,7 +170,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     @Override
     public void dispose()
     {
-
+        cliente.close();
         font.dispose();
         batch.dispose();
 
@@ -195,9 +207,10 @@ public abstract class Escena_juego extends Game implements InputProcessor {
                 {
 
 
-                    float x = (float) (object.getProperties().get("x"));
+                    /*float x = (float) (object.getProperties().get("x"));
                     float y = (float) (object.getProperties().get("y"));
-                    puntos_nacimiento.add(new Vector2(x*Constantes.scale,y*Constantes.scale));
+                    System.out.println(x+" , "+y);*/
+                   // puntos_nacimiento.add(new Vector2(x*Constantes.scale,y*Constantes.scale));
                     //System.out.println(x*Constantes.scale + " , " + y*Constantes.scale);
                     break;
                 }
@@ -275,21 +288,21 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
         float cx,cy;
-        double r = Math.toRadians(player.getRotation());
+        double r = Math.toRadians(list_player.get(index_player).getRotation());
 
 
-        cx = player.getX()+player.getWidth() / 2+(float)Math.cos(r)*Constantes.raycast_distancia;
-        cy = player.getY()+player.getHeight() / 2+(float)Math.sin(r)*Constantes.raycast_distancia;
+        cx = list_player.get(index_player).getX()+list_player.get(index_player).getWidth() / 2+(float)Math.cos(r)*Constantes.raycast_distancia;
+        cy = list_player.get(index_player).getY()+list_player.get(index_player).getHeight() / 2+(float)Math.sin(r)*Constantes.raycast_distancia;
 
 
-        shapeRenderer.line(new Vector2((player.getX()+player.getWidth() / 2),(player.getY()+player.getHeight() / 2)), new Vector2(cx,cy));
+        shapeRenderer.line(new Vector2((list_player.get(index_player).getX()+list_player.get(index_player).getWidth() / 2),(list_player.get(index_player).getY()+list_player.get(index_player).getHeight() / 2)), new Vector2(cx,cy));
         shapeRenderer.setColor(Color.RED);
         shapeRenderer.end();
     }
 
     public  void dinujar_puntos()
     {
-        shapeRenderer.setProjectionMatrix(state.getBatch().getProjectionMatrix());
+        /*shapeRenderer.setProjectionMatrix(state.getBatch().getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (Vector2 vec: puntos_nacimiento) {
@@ -297,7 +310,9 @@ public abstract class Escena_juego extends Game implements InputProcessor {
             shapeRenderer.setColor(Color.RED);
 
         }
-        shapeRenderer.end();
+        shapeRenderer.end();*/
     }
+
+
 }
 

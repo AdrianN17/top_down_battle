@@ -29,6 +29,17 @@ public class envios {
         co.sendUDP(event);
     }
 
+    public void SendClient(String name, Object o)
+    {
+        if(client!=null)
+        {
+            Event event = new Event();
+            event.name = name;
+            event.obj = o;
+            client.sendUDP(event);
+        }
+    }
+
     public void sendToAll(String name, Object o)
     {
         Event event = new Event();

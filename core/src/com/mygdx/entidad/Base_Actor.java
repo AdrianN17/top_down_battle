@@ -18,7 +18,7 @@ import com.mygdx.main.Constantes;
 
 public class Base_Actor extends Actor {
     protected Array<TextureRegion> texturas;
-    protected float hp = 10;
+    public float hp = 10;
     protected World world;
     protected Body body;
     protected Fixture fixture;
@@ -51,9 +51,6 @@ public class Base_Actor extends Actor {
         this.texturas = textureArray;
 
         resize();
-
-
-
     }
 
     public void resize()
@@ -63,7 +60,6 @@ public class Base_Actor extends Actor {
         setSize(width, height);
         setScale(Constantes.scale_player);
 
-        setOrigin(width / 2, height / 2);
         setOrigin(width / 2, height / 2);
     }
 

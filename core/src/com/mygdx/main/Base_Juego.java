@@ -5,8 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-
-
+import com.libs.modelos.data_cada_tiempo;
+import com.mygdx.entidad.Player;
 
 
 public class Base_Juego extends Escena_juego {
@@ -19,18 +19,31 @@ public class Base_Juego extends Escena_juego {
     public void initialize() {
         debugRenderer = new Box2DDebugRenderer();
 
-        //player = new Player(puntos_nacimiento.get(0).x,puntos_nacimiento.get(0).y, state, world);
+        timer.Every("Enviar_data_al_Servidor", 0.2f, new Runnable() {
+            @Override
+            public void run() {
+                Player player = list_player.get(index_player);
 
+                if(player!=null)
+                {
+                    data_cada_tiempo dct = new data_cada_tiempo();
 
+                    dct.android_angulo = player.radio_android;
+                    dct.angulo = player.getRotation();
+                    dct.movh = player.get_enum_h();
+                    dct.movv = player.get_enum_v();
+                    dct.id = player.id;
+
+                    cliente.envio.SendClient("Posiciones", dct);
+                }
+            }
+        });
 
     }
 
     @Override
     public void update(float dt) {
-
-
-
-
+        world.step(1f/60f, 6, 2);
 
         if(index_player!= -1)
         {
@@ -38,11 +51,8 @@ public class Base_Juego extends Escena_juego {
             {
                 list_player.get(index_player).get_angulo(state.getCamera(),Gdx.input.getX(),Gdx.input.getY());
             }
+
         }
-
-
-
-        world.step(1f/60f, 6, 2);
     }
 
     @Override

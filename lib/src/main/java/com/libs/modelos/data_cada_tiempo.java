@@ -5,10 +5,8 @@ import java.io.Serializable;
 public class data_cada_tiempo implements Serializable {
 
     public int id;
-    public float x;
-    public float y;
-    public int hp;
-    public float angulo;
+    public double angulo;
+    public double android_angulo;
     public int movh;
     public int movv;
 

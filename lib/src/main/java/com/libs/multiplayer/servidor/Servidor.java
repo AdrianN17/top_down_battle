@@ -5,7 +5,6 @@ import com.esotericsoftware.kryonet.Server;
 import com.libs.modelos_principal.Event;
 import com.libs.multiplayer.custom.envios;
 import com.libs.runnable.custom_runnable;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -13,6 +12,8 @@ public class Servidor {
     public Server server;
     public Kryonet_Listener_Server listener_list;
     public envios envio;
+
+
 
     public Servidor()
     {

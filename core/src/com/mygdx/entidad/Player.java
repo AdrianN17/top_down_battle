@@ -22,21 +22,20 @@ public class Player extends  Base_Actor{
 
 
 
-    protected movimiento_horizontal movh;
-    protected movimiento_vertical movv;
+    public movimiento_horizontal movh;
+    public movimiento_vertical movv;
 
     protected float vel = 350;
 
-    protected boolean disparando = false;
-    protected short arma_index=0;
-    protected float counter=0;
+    public boolean disparando = false;
+    public int arma_index=0;
 
     public int id;
     public Balas balas;
 
     RayCastCallback callback;
 
-    protected double radio_android=0;
+    public double radio_android=0;
     protected Vector2 punto_inicio= new Vector2();
     protected Vector2 punto_inicio_2= new Vector2();;
 
@@ -89,46 +88,12 @@ public class Player extends  Base_Actor{
 
         balas = new Balas();
 
-        //raycast
-
-        callback = new RayCastCallback(){
-            @Override
-            public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-
-                Object obj =  fixture.getUserData();
-
-                if(obj !=null)
-                {
-                    userdata_value obj_user = (userdata_value)obj;
-
-                    if(obj_user.getTipo().equals("Player") )
-                    {
-                        Player obj_player = (Player)obj_user.getObjeto();
-
-                        if(obj_player.id!= id)
-                        {
-                            obj_player.hp = obj_player.hp - balas.balas.get(arma_index-1).dano;
-                        }
-                    }
-                }
-
-
-                return 1;
-            }
-        };
-
-
-
     }
 
     @Override
     public void act(float dt) {
         super.act(dt);
 
-        if(disparando)
-        {
-            counter = counter+dt;
-        }
 
         Vector2 vec = new Vector2(0, 0);
 
@@ -169,26 +134,7 @@ public class Player extends  Base_Actor{
                 resize();
             }
         }
-        else
-        {
-            if(arma_index-1>=1)
-            {
-                final bala bala_elegida = balas.balas.get(arma_index-1);
 
-                if(counter>bala_elegida.velocidad)
-                {
-                    balas.disminuir_bala(2, new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println(bala_elegida.stock);
-                            hacer_raycast();
-                        }
-                    });
-
-                    counter=0;
-                }
-            }
-        }
 
         float mx, my;
         mx = vec.x * body.getMass()* body.getMass() * dt* vel;
@@ -324,12 +270,10 @@ public class Player extends  Base_Actor{
             {
                 case 1: {
                     disparando=false;
-                    counter = 0;
                     break;
                 }
                 case 2: {
                     disparando=false;
-                    counter = 0;
                     break;
                 }
             }
@@ -369,12 +313,12 @@ public class Player extends  Base_Actor{
         {
             case 1: {
                 disparando=false;
-                counter = 0;
+                //counter = 0;
                 break;
             }
             case 2: {
                 disparando=false;
-                counter = 0;
+                //counter = 0;
                 break;
             }
         }
@@ -447,6 +391,63 @@ public class Player extends  Base_Actor{
     public void set_inicial_vector_2(int x, int y)
     {
         punto_inicio_2.set(x,y);
+    }
+
+    public int get_enum_h()
+    {
+        switch(movh)
+        {
+            default:
+            {
+                return 0;
+            }
+            case a:
+            {
+                return 1;
+            }
+            case d:
+            {
+                return 2;
+            }
+            case todos_lados:
+            {
+                return 3;
+            }
+        }
+    }
+
+    public int get_enum_v()
+    {
+        switch(movv)
+        {
+            default:
+            {
+                return 0;
+            }
+            case w:
+            {
+                return 1;
+            }
+            case s:
+            {
+                return 2;
+            }
+            case todos_lados:
+            {
+                return 3;
+            }
+        }
+    }
+
+    public void setPosicion(float x, float y)
+    {
+        float ox;
+        float oy;
+
+        ox = (x/Constantes.scale)/Constantes.PIXEL_IN_METERS;
+        oy = (y/Constantes.scale)/Constantes.PIXEL_IN_METERS;
+
+        body.setTransform(ox,oy,0);
     }
 
 

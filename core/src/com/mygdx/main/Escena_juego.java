@@ -28,15 +28,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.libs.modelos.array_data_inicial;
+import com.libs.modelos.data_cada_tiempo;
+import com.libs.modelos.data_cada_tiempo_cliente;
 import com.libs.modelos.data_inicial;
-import com.libs.modelos_principal.Event;
 import com.libs.multiplayer.cliente.Cliente;
 import com.libs.runnable.custom_runnable;
 import com.libs.timer.Timer;
 import com.mygdx.entidad.Player;
-import com.mygdx.main.entidades.entidad.player;
 import com.mygdx.main.entidades.modelo.userdata_value;
-import com.mygdx.main.launcher.Constantes_Server;
 
 public abstract class Escena_juego extends Game implements InputProcessor {
     public Stage state;
@@ -61,6 +60,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     public Cliente cliente;
 
     public Timer timer;
+    public boolean he_muerto=false;
 
 
     @Override
@@ -116,6 +116,8 @@ public abstract class Escena_juego extends Game implements InputProcessor {
                 frameRate = Gdx.graphics.getFramesPerSecond();
             }
         });
+
+
 
 
     }
@@ -184,6 +186,9 @@ public abstract class Escena_juego extends Game implements InputProcessor {
     @Override
     public void dispose()
     {
+        cliente.envio.SendClient("eliminar_player",this.index_player);
+
+
         cliente.close();
         font.dispose();
         batch.dispose();
@@ -335,6 +340,8 @@ public abstract class Escena_juego extends Game implements InputProcessor {
             add(Array.class);
             add(data_inicial.class);
             add(array_data_inicial.class);
+            add(data_cada_tiempo.class);
+            add(data_cada_tiempo_cliente.class);
         }});
 
         //trigger
@@ -361,7 +368,105 @@ public abstract class Escena_juego extends Game implements InputProcessor {
                 }
 
 
-            }} );
+        }} );
+
+        cliente.add_trigger("Enviar_Posiciones_Todos", new custom_runnable(){
+            @Override
+            public void run()
+            {
+                if(this.obj instanceof Array) {
+                    Array<data_cada_tiempo_cliente> data = (Array<data_cada_tiempo_cliente>) this.obj;
+
+
+                    for(data_cada_tiempo_cliente da : data)
+                    {
+                        for(Player pl : list_player)
+                        {
+                            if(pl.id == da.id)
+                            {
+                                System.out.println("actualizado");
+                                pl.setPosicion(da.x,da.y);
+
+                                //x,y
+
+                                pl.balas.balas.get(0).municion = da.municion_1;
+                                pl.balas.balas.get(1).municion = da.municion_2;
+
+                                pl.balas.balas.get(0).stock = da.stock_1;
+                                pl.balas.balas.get(1).stock = da.stock_2;
+
+                                pl.hp = da.hp;
+
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    Gdx.app.log("trigger","Error al instanciar");
+                }
+            }
+        });
+
+
+        cliente.add_trigger("Inicializar_nuevo",new custom_runnable(){
+            @Override
+            public void run()
+            {
+                if(this.obj instanceof data_inicial) {
+                    data_inicial data = (data_inicial) this.obj;
+                }
+                else
+                {
+                    Gdx.app.log("trigger","Error al instanciar");
+                }
+            }
+        });
+
+
+
+        cliente.add_trigger("eliminar_player_en_cliente", new custom_runnable()
+        {
+            @Override
+            public void run() {
+                if (this.obj instanceof Integer) {
+                    int data = (Integer) this.obj;
+
+                    for (Player pl:list_player) {
+                        if(pl.id == data)
+                        {
+                            list_player.removeValue(pl,true);
+                            break;
+                        }
+                    }
+                } else {
+                    Gdx.app.log("trigger", "Error al instanciar");
+                }
+            }
+        });
+
+        cliente.add_trigger("eliminar_player_en_cliente_muerto", new custom_runnable()
+        {
+            @Override
+            public void run() {
+                if (this.obj instanceof Integer) {
+                    int data = (Integer) this.obj;
+
+                    for (Player pl:list_player) {
+                        if(pl.id == data)
+                        {
+                            list_player.removeValue(pl,true);
+                            he_muerto=true;
+                            break;
+                        }
+                    }
+                } else {
+                    Gdx.app.log("trigger", "Error al instanciar");
+                }
+            }
+        });
     }
 
 }

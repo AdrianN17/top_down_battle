@@ -55,6 +55,11 @@ public class Cliente {
         return client.getReturnTripTime();
     }
 
+    public String IsConnected()
+    {
+        return Boolean.toString(client.isConnected());
+    }
+
 
     public void close()
     {

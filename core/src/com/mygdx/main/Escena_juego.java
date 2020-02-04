@@ -1,5 +1,6 @@
 package com.mygdx.main;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -26,6 +27,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.libs.modelos.array_data_inicial;
 import com.libs.modelos.data_cada_tiempo;
@@ -84,7 +86,17 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         orthocamera.setToOrtho(false,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         map = new TmxMapLoader().load("mapa.tmx");
-        state = new Stage(new StretchViewport(Constantes.width_G, Constantes.height_G, orthocamera));//
+
+        if(Gdx.app.getType() == Application.ApplicationType.Android)
+        {
+            state = new Stage(new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), orthocamera));
+        }
+        else
+        {
+            state = new Stage(new StretchViewport(Gdx.graphics.getWidth()*2, Gdx.graphics.getHeight()*2, orthocamera));
+        }
+
+
         tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(map,1);
 
         MapProperties prop = map.getProperties();
@@ -168,7 +180,13 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
         batch.begin();
         font.draw(batch, (int)frameRate + " fps", 10, Gdx.graphics.getHeight() - 10);
-        font.draw(batch, ping + " ms", 10, Gdx.graphics.getHeight() - 20);
+        font.draw(batch, ping + " ms", 10, Gdx.graphics.getHeight() - 30);
+
+        if(index_player!=-1) {
+
+            font.draw(batch, "Conectado : " + cliente.IsConnected(), 10, Gdx.graphics.getHeight() - 50);
+        }
+
         batch.end();
 
     }

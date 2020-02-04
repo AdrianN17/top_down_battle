@@ -7,6 +7,7 @@ import com.libs.multiplayer.custom.envios;
 import com.libs.runnable.custom_runnable;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 public class Cliente {
     protected Client client;

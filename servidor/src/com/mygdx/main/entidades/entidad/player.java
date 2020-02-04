@@ -279,5 +279,50 @@ public class player {
         balas.recargar_bala(arma_index);
     }
 
+    public int get_enum_h()
+    {
+        switch(movh)
+        {
+            default:
+            {
+                return 0;
+            }
+            case a:
+            {
+                return 1;
+            }
+            case d:
+            {
+                return 2;
+            }
+            case todos_lados:
+            {
+                return 3;
+            }
+        }
+    }
+
+    public int get_enum_v()
+    {
+        switch(movv)
+        {
+            default:
+            {
+                return 0;
+            }
+            case w:
+            {
+                return 1;
+            }
+            case s:
+            {
+                return 2;
+            }
+            case todos_lados:
+            {
+                return 3;
+            }
+        }
+    }
 
 }

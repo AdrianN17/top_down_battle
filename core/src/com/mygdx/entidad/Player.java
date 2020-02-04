@@ -282,6 +282,57 @@ public class Player extends  Base_Actor{
         punto_inicio_2.set(x,y);
     }
 
+    public void setmovh(int id)
+    {
+
+
+
+        switch(id)
+        {
+            default: {
+                movh = movimiento_horizontal.ninguno;
+                break;
+            }
+            case 1: {
+                movh = movimiento_horizontal.a;
+                break;
+            }
+            case 2: {
+                movh = movimiento_horizontal.d;
+                break;
+            }
+            case 3: {
+                movh = movimiento_horizontal.todos_lados;
+                break;
+            }
+        }
+    }
+
+    public void setmovv(int id)
+    {
+
+
+        switch(id)
+        {
+            default: {
+                movv = movimiento_vertical.ninguno;
+                break;
+            }
+            case 1: {
+                movv = movimiento_vertical.w;
+                break;
+            }
+            case 2: {
+                movv = movimiento_vertical.s;
+                break;
+            }
+            case 3: {
+                movv = movimiento_vertical.todos_lados;
+                break;
+            }
+        }
+    }
+
     public int get_enum_h()
     {
         switch(movh)

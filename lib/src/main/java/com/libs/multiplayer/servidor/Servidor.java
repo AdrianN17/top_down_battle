@@ -6,6 +6,7 @@ import com.libs.modelos_principal.Event;
 import com.libs.multiplayer.custom.envios;
 import com.libs.runnable.custom_runnable;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 public class Servidor {
@@ -23,8 +24,9 @@ public class Servidor {
         server.start();
 
         try {
-            InetSocketAddress socket1 = new InetSocketAddress("192.168.0.3", 22122);
-            InetSocketAddress socket2 = new InetSocketAddress("192.168.0.3", 22123);
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            InetSocketAddress socket1 = new InetSocketAddress(inetAddress.getHostAddress(), 22122);
+            InetSocketAddress socket2 = new InetSocketAddress(inetAddress.getHostAddress(), 22123);
 
             server.bind(socket1, socket2);
 

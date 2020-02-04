@@ -151,15 +151,30 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         state.act();
 
-        timer.Update(dt);
-        update(dt);
 
-        if(index_player!= -1)
+        if(cliente.IsConnected().equals("true"))
         {
-            float x = clamp(list_player.get(index_player).getX(), map_X - Constantes.width_G/2, 0+ Constantes.width_G/2);
-            float y = clamp(list_player.get(index_player).getY(), map_Y - Constantes.height_G/2, 0+ Constantes.height_G/2);
+            timer.Update(dt);
+            update(dt);
 
-            state.getCamera().position.set(x,y, 0);
+            if(index_player!= -1)
+            {
+
+                float x,y;
+
+                if(Gdx.app.getType() == Application.ApplicationType.Android)
+                {
+                    x = clamp(list_player.get(index_player).getX(), map_X - Constantes.width_G/4, 0+ Constantes.width_G/4);
+                    y = clamp(list_player.get(index_player).getY(), map_Y - Constantes.height_G/4, 0+ Constantes.height_G/4);
+                }
+                else {
+                    x = clamp(list_player.get(index_player).getX(), map_X - Constantes.width_G / 2, 0 + Constantes.width_G / 2);
+                    y = clamp(list_player.get(index_player).getY(), map_Y - Constantes.height_G / 2, 0 + Constantes.height_G / 2);
+                }
+
+
+                state.getCamera().position.set(x,y, 0);
+            }
         }
 
 
@@ -420,6 +435,12 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
                                 pl.hp = da.hp;
 
+                                pl.setmovh(da.movh);
+                                pl.setmovv(da.movv);
+
+                                pl.setRotation((float)da.angulo);
+                                pl.radio_android = da.angulo_android;
+
                                 break;
                             }
                         }
@@ -440,6 +461,9 @@ public abstract class Escena_juego extends Game implements InputProcessor {
             {
                 if(this.obj instanceof data_inicial) {
                     data_inicial data = (data_inicial) this.obj;
+
+                    list_player.add(new Player(data.x, data.y, state, world, data.id));
+
                 }
                 else
                 {

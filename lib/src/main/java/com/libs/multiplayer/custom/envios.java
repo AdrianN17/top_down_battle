@@ -5,6 +5,8 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.libs.modelos_principal.Event;
 
+import java.util.Collection;
+
 public class envios {
 
     Server server;
@@ -26,7 +28,7 @@ public class envios {
         Event event = new Event();
         event.name = name;
         event.obj = o;
-        co.sendUDP(event);
+        co.sendTCP(event);
     }
 
     public void SendClient(String name, Object o)
@@ -36,7 +38,7 @@ public class envios {
             Event event = new Event();
             event.name = name;
             event.obj = o;
-            client.sendUDP(event);
+            client.sendTCP(event);
         }
     }
 
@@ -49,7 +51,7 @@ public class envios {
 
         for(Connection co : getConnections())
         {
-            co.sendUDP(event);
+            co.sendTCP(event);
         }
     }
 
@@ -64,7 +66,7 @@ public class envios {
         {
             if(co!= co_exclude)
             {
-                co.sendUDP(event);
+                co.sendTCP(event);
             }
         }
     }

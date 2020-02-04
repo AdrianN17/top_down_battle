@@ -12,4 +12,9 @@ public class data_cada_tiempo_cliente {
     public int municion_1;
     public int municion_2;
 
+    public int movh;
+    public int movv;
+    public double angulo;
+    public double angulo_android;
+
 }

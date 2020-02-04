@@ -86,7 +86,7 @@ public class Servidor_libgdx extends Game {
 
         timer = new Timer();
 
-        timer.Every("Enviar_Posiciones_Todos", 1, new Runnable() {
+        timer.Every("Enviar_Posiciones_Todos", 0.4f, new Runnable() {
             @Override
             public void run() {
 
@@ -106,6 +106,12 @@ public class Servidor_libgdx extends Game {
                 dctc.municion_1 = pl.balas.balas.get(0).municion;
                 dctc.stock_2 = pl.balas.balas.get(1).stock;
                 dctc.municion_2 = pl.balas.balas.get(1).municion;
+
+                //
+                dctc.angulo = pl.radio;
+                dctc.angulo_android = pl.radio_android;
+                dctc.movh = pl.get_enum_h();
+                dctc.movv = pl.get_enum_v();
 
                 al_dctc.add(dctc);
             }
@@ -219,7 +225,7 @@ public class Servidor_libgdx extends Game {
 
                 //enviar a todos excepto el
 
-                servidor.envio.sendToAllBut("Inicializar_nuevo",list_player.get(id),this.connection);
+                servidor.envio.sendToAllBut("Inicializar_nuevo",lista_inicial.get(id),this.connection);
 
             }} );
 

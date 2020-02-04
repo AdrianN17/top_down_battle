@@ -1,5 +1,6 @@
 package com.mygdx.main.entidades.entidad;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -32,8 +33,8 @@ public class player {
     protected boolean disparando = false;
     public int arma_index  = 0;
     protected float vel = 350;
-    protected float w = 33.0f ;
-    protected float h = 43.0f;
+    public float w = 33;
+    public float h = 43;
 
     RayCastCallback callback;
     public float hp = 10;
@@ -50,9 +51,9 @@ public class player {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(x +(w/2) /
+        bodyDef.position.set((this.x +(this.w/2)) /
                         Constantes_Server.PIXEL_IN_METERS,
-                (y + (h/2)) / Constantes_Server.PIXEL_IN_METERS);
+                (this.y + (this.h/2)) / Constantes_Server.PIXEL_IN_METERS);
 
 
         body = world.createBody(bodyDef);
@@ -110,10 +111,16 @@ public class player {
         };
 
         this.radio=0;
+
+        this.x =  (body.getPosition().x * Constantes_Server.PIXEL_IN_METERS) - this.w / 2;
+        this.y =  (body.getPosition().y * Constantes_Server.PIXEL_IN_METERS) - this.h / 2;
     }
 
     public void update(float dt)
     {
+        timer.Update(dt);
+
+
         Vector2 vec = new Vector2(0, 0);
 
 
@@ -151,10 +158,10 @@ public class player {
         body.applyForceToCenter(mx,my,true);
         //}
 
-        this.x = (body.getPosition().x * Constantes_Server.PIXEL_IN_METERS) - this.w / 2;
-        this.y = (body.getPosition().y * Constantes_Server.PIXEL_IN_METERS) - this.h / 2;
 
 
+        this.x =  (body.getPosition().x * Constantes_Server.PIXEL_IN_METERS) - this.w / 2;
+        this.y =  (body.getPosition().y * Constantes_Server.PIXEL_IN_METERS) - this.h / 2;
 
     }
 
@@ -164,7 +171,7 @@ public class player {
 
         if(arma_index == 1)
         {
-            balas.disminuir_bala(arma_index -1, new Runnable() {
+            balas.disminuir_bala(arma_index , new Runnable() {
                 @Override
                 public void run() {
                     hacer_raycast();
@@ -178,8 +185,12 @@ public class player {
             timer.Every("balas", bala_elegida.velocidad, new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(bala_elegida.stock);
-                    hacer_raycast();
+                balas.disminuir_bala(arma_index , new Runnable() {
+                    @Override
+                    public void run() {
+                        hacer_raycast();
+                    }
+                });
                 }
             });
 
@@ -262,6 +273,10 @@ public class player {
                 break;
             }
         }
+    }
+
+    public void recarga(){
+        balas.recargar_bala(arma_index);
     }
 
 

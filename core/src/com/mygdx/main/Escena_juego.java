@@ -26,10 +26,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.libs.modelos.array_data_inicial;
 import com.libs.modelos.data_cada_tiempo;
 import com.libs.modelos.data_cada_tiempo_cliente;
+import com.libs.modelos.data_disparo;
 import com.libs.modelos.data_inicial;
 import com.libs.multiplayer.cliente.Cliente;
 import com.libs.runnable.custom_runnable;
@@ -61,6 +62,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
     public Timer timer;
     public boolean he_muerto=false;
+    public int ping  = 999;
 
 
     @Override
@@ -82,8 +84,8 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         orthocamera.setToOrtho(false,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         map = new TmxMapLoader().load("mapa.tmx");
-        state = new Stage(new FitViewport(Constantes.width_G, Constantes.height_G, orthocamera));//
-        tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(map,Constantes.scale);
+        state = new Stage(new StretchViewport(Constantes.width_G, Constantes.height_G, orthocamera));//
+        tiledMapRenderer = new OrthogonalTiledMapRendererWithSprites(map,1);
 
         MapProperties prop = map.getProperties();
 
@@ -95,8 +97,8 @@ public abstract class Escena_juego extends Game implements InputProcessor {
         int mapPixelWidth = mapWidth * tilePixelWidth;
         int mapPixelHeight = mapHeight * tilePixelHeight;
 
-        map_X = mapPixelWidth*Constantes.scale ;
-        map_Y = mapPixelHeight*Constantes.scale ;
+        map_X = mapPixelWidth;
+        map_Y = mapPixelHeight;
 
         crear_limite(map_X,map_Y);
         crear_objetos();
@@ -110,12 +112,16 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
         initialize();
 
-        timer.Every("get_fps", 1, new Runnable() {
+        timer.Every("get_fps_ping", 0.5f, new Runnable() {
             @Override
             public void run() {
                 frameRate = Gdx.graphics.getFramesPerSecond();
+                ping = cliente.getMS();
+
             }
         });
+
+
 
 
 
@@ -162,6 +168,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
 
         batch.begin();
         font.draw(batch, (int)frameRate + " fps", 10, Gdx.graphics.getHeight() - 10);
+        font.draw(batch, ping + " ms", 10, Gdx.graphics.getHeight() - 20);
         batch.end();
 
     }
@@ -218,18 +225,16 @@ public abstract class Escena_juego extends Game implements InputProcessor {
                     w = (float) (object.getProperties().get("width"));
                     h = (float) (object.getProperties().get("height"));
 
-                    crear_pared(x * Constantes.scale, y * Constantes.scale, w * Constantes.scale, h * Constantes.scale);
+                    crear_pared(x , y, w , h);
 
                     break;
                 }
                 case "Punto":
                 {
-
-
                     /*float x = (float) (object.getProperties().get("x"));
                     float y = (float) (object.getProperties().get("y"));
                     System.out.println(x+" , "+y);*/
-                   // puntos_nacimiento.add(new Vector2(x*Constantes.scale,y*Constantes.scale));
+                    //puntos_nacimiento.add(new Vector2(x*Constantes.scale,y*Constantes.scale));
                     //System.out.println(x*Constantes.scale + " , " + y*Constantes.scale);
                     break;
                 }
@@ -342,6 +347,7 @@ public abstract class Escena_juego extends Game implements InputProcessor {
             add(array_data_inicial.class);
             add(data_cada_tiempo.class);
             add(data_cada_tiempo_cliente.class);
+            add(data_disparo.class);
         }});
 
         //trigger
@@ -384,10 +390,9 @@ public abstract class Escena_juego extends Game implements InputProcessor {
                         {
                             if(pl.id == da.id)
                             {
-                                System.out.println("actualizado");
+
                                 pl.setPosicion(da.x,da.y);
 
-                                //x,y
 
                                 pl.balas.balas.get(0).municion = da.municion_1;
                                 pl.balas.balas.get(1).municion = da.municion_2;
@@ -467,6 +472,8 @@ public abstract class Escena_juego extends Game implements InputProcessor {
                 }
             }
         });
+
+
     }
 
 }

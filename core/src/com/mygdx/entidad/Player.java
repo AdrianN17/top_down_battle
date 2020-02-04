@@ -8,14 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.main.Constantes;
 import com.mygdx.main.entidades.entidad.Balas;
-import com.mygdx.main.entidades.modelo.bala;
 import com.mygdx.main.entidades.modelo.userdata_value;
 
 public class Player extends  Base_Actor{
@@ -28,16 +25,17 @@ public class Player extends  Base_Actor{
     protected float vel = 350;
 
     public boolean disparando = false;
-    public int arma_index=0;
+
 
     public int id;
     public Balas balas;
 
-    RayCastCallback callback;
 
     public double radio_android=0;
     protected Vector2 punto_inicio= new Vector2();
     protected Vector2 punto_inicio_2= new Vector2();;
+
+    public boolean recargando=false;
 
     public Player(float x, float y, Stage stage, World world,final int id) {
         super(x, y, stage);
@@ -94,7 +92,6 @@ public class Player extends  Base_Actor{
     public void act(float dt) {
         super.act(dt);
 
-
         Vector2 vec = new Vector2(0, 0);
 
         if(Gdx.app.getType() == Application.ApplicationType.Desktop) {
@@ -134,6 +131,19 @@ public class Player extends  Base_Actor{
                 resize();
             }
         }
+        else
+        {
+            if(arma_index==1)
+            {
+                id_textura = 0;
+                resize();
+            }
+            else if(arma_index==2)
+            {
+                id_textura = 2;
+                resize();
+            }
+        }
 
 
         float mx, my;
@@ -148,9 +158,6 @@ public class Player extends  Base_Actor{
             //body.applyLinearImpulse(new Vector2(mx, my), body.getWorldCenter(), false);
             body.applyForceToCenter(mx,my,true);
         //}
-
-
-
 
         this.setPosition((body.getPosition().x * Constantes.PIXEL_IN_METERS) - getWidth() / 2, (body.getPosition().y * Constantes.PIXEL_IN_METERS) - getHeight() / 2);
     }
@@ -182,14 +189,17 @@ public class Player extends  Base_Actor{
 
         }
 
-        if(keycode == Input.Keys.NUM_1)
+        if(!recargando)
         {
-            arma_index = 1;
-        }
+            if(keycode == Input.Keys.NUM_1)
+            {
+                arma_index = 1;
+            }
 
-        if(keycode == Input.Keys.NUM_2)
-        {
-            arma_index = 2;
+            if(keycode == Input.Keys.NUM_2)
+            {
+                arma_index = 2;
+            }
         }
     }
 
@@ -214,127 +224,6 @@ public class Player extends  Base_Actor{
             {
                 movv = movimiento_vertical.ninguno;
             }
-    }
-
-
-    public void presionar_pc(int button)
-    {
-        if(button == Input.Buttons.LEFT)
-        {
-            switch(arma_index)
-            {
-                case 1: {
-                    id_textura = 0;
-                    resize();
-
-                    balas.disminuir_bala(1, new Runnable() {
-                        @Override
-                        public void run() {
-                            hacer_raycast();
-                        }
-                    });
-
-                    disparando=true;
-                    break;
-                }
-                case 2: {
-                    id_textura = 2;
-                    resize();
-                    disparando=true;
-                    break;
-                }
-            }
-        }
-        else if(button == Input.Buttons.RIGHT)
-        {
-            switch(arma_index) {
-                case 1:
-                {
-                    balas.recargar_bala(arma_index );
-                    break;
-                }
-                case 2:
-                {
-                    balas.recargar_bala(arma_index);
-                    break;
-                }
-            }
-        }
-    }
-
-    public void soltar_pc(int button)
-    {
-        if(button == Input.Buttons.LEFT)
-        {
-            switch(arma_index)
-            {
-                case 1: {
-                    disparando=false;
-                    break;
-                }
-                case 2: {
-                    disparando=false;
-                    break;
-                }
-            }
-        }
-    }
-
-    public void presionar_android()
-    {
-        switch(arma_index)
-        {
-            case 1: {
-                id_textura = 0;
-                resize();
-
-                balas.disminuir_bala(1, new Runnable() {
-                    @Override
-                    public void run() {
-                        hacer_raycast();
-                    }
-                });
-
-                disparando=true;
-                break;
-            }
-            case 2: {
-                id_textura = 2;
-                resize();
-                disparando=true;
-                break;
-            }
-        }
-    }
-
-    public void soltar_android(int pointer)
-    {
-        switch(arma_index)
-        {
-            case 1: {
-                disparando=false;
-                //counter = 0;
-                break;
-            }
-            case 2: {
-                disparando=false;
-                //counter = 0;
-                break;
-            }
-        }
-    }
-
-
-    public void hacer_raycast()
-    {
-        float x,y;
-        double r = Math.toRadians(getRotation());
-
-
-        x = getX()+(getWidth()*Constantes.scale) / 2+(float)Math.cos(r)*Constantes.raycast_distancia;
-        y = getY()+(getHeight()*Constantes.scale) / 2+(float)Math.sin(r)*Constantes.raycast_distancia;
-
-        world.rayCast(callback, new Vector2((getX()+getWidth() / 2)/Constantes.PIXEL_IN_METERS,(getY()+getHeight() / 2)/Constantes.PIXEL_IN_METERS), new Vector2(x,y));
     }
 
     public void get_angulo(Camera camera,int x,int y)
@@ -441,13 +330,8 @@ public class Player extends  Base_Actor{
 
     public void setPosicion(float x, float y)
     {
-        float ox;
-        float oy;
+        body.setTransform(x,y,0);
 
-        ox = (x/Constantes.scale)/Constantes.PIXEL_IN_METERS;
-        oy = (y/Constantes.scale)/Constantes.PIXEL_IN_METERS;
-
-        body.setTransform(ox,oy,0);
     }
 
 

@@ -8,9 +8,10 @@ public class bala {
     public float dano;
     public float velocidad;
     public boolean raycast;
+    public float velocidad_recarga;
 
 
-    public bala(int stock, int max_stock, int municion, int max_municion, float dano, float velocidad, boolean raycast) {
+    public bala(int stock, int max_stock, int municion, int max_municion, float dano, float velocidad, boolean raycast,float velocidad_recarga) {
         this.stock = stock;
         this.max_stock = max_stock;
         this.municion = municion;
@@ -18,6 +19,7 @@ public class bala {
         this.dano = dano;
         this.velocidad = velocidad;
         this.raycast=raycast;
+        this.velocidad_recarga=velocidad_recarga;
 
     }
 }

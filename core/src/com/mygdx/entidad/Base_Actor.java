@@ -20,7 +20,7 @@ public class Base_Actor extends Actor {
     protected Array<TextureRegion> texturas;
     public float hp = 10;
     protected World world;
-    protected Body body;
+    public Body body;
     protected Fixture fixture;
     protected CircleShape shape;
     protected enum movimiento_horizontal{ninguno,a,d,todos_lados}
@@ -28,6 +28,7 @@ public class Base_Actor extends Actor {
     protected BitmapFont font;
 
     public int id_textura = 1;
+    public int arma_index=0;
 
     public Base_Actor(float x, float y, Stage stage)
     {
@@ -76,7 +77,8 @@ public class Base_Actor extends Actor {
 
         if (isVisible())
         {
-            font.draw(batch,"Vida : " + hp,  getX()-(0.5f*getWidth()*Constantes.scale), getY()+(getHeight()*2)*Constantes.scale);
+            font.draw(batch,"Vida : " + hp,  getX()-(0.5f*getWidth()), getY()+(getHeight()*2));
+            font.draw(batch,"Arma : " + arma_index,  getX()-(0.5f*getWidth()), getY()+(getHeight()*4));
             batch.draw(texturas.get(id_textura), getX(), getY(),getOriginX(), getOriginY(),getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
         }
     }

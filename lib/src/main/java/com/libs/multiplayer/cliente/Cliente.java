@@ -50,6 +50,11 @@ public class Cliente {
         listener_list.events_list.put(name,function);
     }
 
+    public int getMS()
+    {
+        return client.getReturnTripTime();
+    }
+
 
     public void close()
     {

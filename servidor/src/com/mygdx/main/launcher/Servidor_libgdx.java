@@ -4,6 +4,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -23,6 +26,7 @@ import com.badlogic.gdx.utils.Array;
 import com.libs.modelos.array_data_inicial;
 import com.libs.modelos.data_cada_tiempo;
 import com.libs.modelos.data_cada_tiempo_cliente;
+import com.libs.modelos.data_disparo;
 import com.libs.modelos.data_inicial;
 import com.libs.multiplayer.servidor.Servidor;
 import com.libs.runnable.custom_runnable;
@@ -46,6 +50,8 @@ public class Servidor_libgdx extends Game {
     public Array<Vector2> punto_inicio;
     public Timer timer;
     int id_ini=0;
+    protected BitmapFont font;
+    protected SpriteBatch batch;
 
 
 
@@ -54,6 +60,7 @@ public class Servidor_libgdx extends Game {
         punto_inicio = new Array<Vector2>();
 
         servidor = new Servidor();
+
         listener();
 
         list_player = new Array<>();
@@ -90,8 +97,8 @@ public class Servidor_libgdx extends Game {
                 data_cada_tiempo_cliente dctc = new data_cada_tiempo_cliente();
                 dctc.hp = pl.hp;
 
-                dctc.x = pl.x;
-                dctc.y = pl.y;
+                dctc.x = pl.body.getPosition().x;
+                dctc.y = pl.body.getPosition().y;
 
                 dctc.id = pl.id;
 
@@ -121,6 +128,9 @@ public class Servidor_libgdx extends Game {
             }
         });
 
+
+        font = new BitmapFont();
+        batch = new SpriteBatch();
     }
 
     @Override
@@ -136,17 +146,21 @@ public class Servidor_libgdx extends Game {
         }
 
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(Color.CYAN);
+
+        batch.begin();
         for(player pl : list_player)
         {
-            renderer.circle(pl.x, pl.y, 20);
+            //renderer.circle(pl.x, pl.y, 20);
+            font.draw(batch,"Arma : " + pl.arma_index, pl.x-(0.5f*pl.w), pl.y+(pl.h));
         }
 
         renderer.end();
+        batch.end();
 
     }
 
@@ -162,10 +176,12 @@ public class Servidor_libgdx extends Game {
 
         servidor.add_classes(new Array<Class>(){{
             add(Array.class);
+
             add(data_inicial.class);
             add(array_data_inicial.class);
             add(data_cada_tiempo.class);
             add(data_cada_tiempo_cliente.class);
+            add(data_disparo.class);
         }});
 
         //trigger
@@ -248,6 +264,63 @@ public class Servidor_libgdx extends Game {
                         }
                     }
                 } else {
+                    Gdx.app.log("trigger", "Error al instanciar");
+                }
+            }
+        });
+
+        servidor.add_trigger("disparar",new custom_runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (this.obj instanceof data_disparo) {
+                    data_disparo data = (data_disparo) this.obj;
+
+                    for (player pl:list_player) {
+                        if (pl.id == data.id) {
+
+                            if(!data.disparando)
+                            {
+                                pl.arma_index = data.bala;
+                                pl.disparar();
+                            }
+                            else
+                            {
+                                pl.dejar_disparar();
+                            }
+
+                            break;
+
+                        }
+                    }
+                }
+                else
+                {
+                    Gdx.app.log("trigger", "Error al instanciar");
+                }
+            }
+        });
+
+        servidor.add_trigger("recargar",new custom_runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (this.obj instanceof data_disparo)
+                {
+                    final data_disparo data = (data_disparo) this.obj;
+
+                    for (player pl:list_player) {
+                        if (pl.id == data.id) {
+                            pl.arma_index = data.bala;
+                            pl.recarga();
+                            break;
+                        }
+                    }
+                }
+                else
+                {
                     Gdx.app.log("trigger", "Error al instanciar");
                 }
             }
@@ -354,8 +427,6 @@ public class Servidor_libgdx extends Game {
         fixture.setUserData(new userdata_value("Pared",null));
 
         shape.dispose();
-
-
     }
 }
 
